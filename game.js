@@ -1,11 +1,10 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
-var game = function() {
-    var exports = {};
-    
+function Game() {
     var FPS = 60;
     var i = 0;
+    
     function gameLoop() {
         i = (i + 1) % FPS;
         
@@ -14,12 +13,11 @@ var game = function() {
         ctx.fillRect(300 + i * 2,200, 100, 100);
     }
     
-    exports.start = function() {
+    this.start = function() {
         console.log("game started");
         setInterval(gameLoop, 1000/FPS);
     }
-    
-    return exports;
-}();
+}
 
+var game = new Game();
 game.start();
