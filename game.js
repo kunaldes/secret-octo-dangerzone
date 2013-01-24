@@ -65,44 +65,111 @@ function Game() {
     
     menu.startMenu();
     
-    function gameLoop() {
+    var gameLoop = function() {
         loopCount++;
         ctx.clearRect(0, 0, 800, 600);
         
-        if (state === "menu"){
+        if (state === "menu") {
             menu.draw();
         }
         else if (state === "game") {
+        
+            //update
             for(var i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];                
                 if(typeof(obj.update) === "function")
                     obj.update();
-                if(typeof(obj.draw) === "function")
-                    obj.draw(this.camera);
             }
             
-            if((loopCount % 100) === 0) {
-                this.player.acceleration = ((Math.floor(loopCount / 100) % 2) * 2 - 1) * .2;
+            //check collisions
+            for(i = 0; i < this.gameObjects.length; i++) {
+                var obj = this.gameObjects[i];
+                if(obj === this.player) continue;
+                if(utils.doesIntersect(this.player, obj))
+                    player.x = 0; //jump to beginning, can change later
+            }
+            
+            this.camera.centerViewOn(player);
+            
+            //draw
+            for(i = 0; i < this.gameObjects.length; i++) {
+                var obj = this.gameObjects[i];  
+                if(typeof(obj.draw) === "function")
+                    obj.draw(this.camera);
             }
         }
     }
     
-    function initGame() {
+    var initBarriers = function() {
+        var barriers = [];
+        var numObstacles = 25;
+        var width = 10;
+        var maxGap = 160;
+        var minGap = 30;
+        var xStart = 400;
+        var xSpread = 400;
+        var gapPosition = 10;
+        var heightBeyondScreen = canvas.height / 2;
+        
+        for(var i = 0; i < numObstacles; i++) {
+            var progress = (numObstacles - i) / (numObstacles - 1);
+            var gap = minGap + progress * (maxGap - minGap);
+            //randomize the gap position:
+            gapPosition = (gapPosition * 12453321 + 31) % canvas.height;
+            if(gapPosition > canvas.height - gap)
+                gapPosition = canvas.height - gap;
+                
+            var topBarrier = new Barrier(width, gapPosition + heightBeyondScreen);
+            topBarrier.x = xSpread * i + xStart;
+            topBarrier.y = -heightBeyondScreen;
+            
+            var bottomBarrier = new Barrier(width, canvas.height - gap - gapPosition + heightBeyondScreen);
+            bottomBarrier.x = xSpread * i + xStart;
+            bottomBarrier.y = gapPosition + gap;
+            
+            barriers.push(topBarrier);
+            barriers.push(bottomBarrier);
+        }
+        
+        return barriers;
+    }
+    
+    var moveHandler = function(evt, thisGame) {
+        var x = evt.pageX - canvas.offsetLeft;
+        var y = evt.pageY - canvas.offsetTop;
+        
+        //set player y
+        thisGame.player.y = y - player.height / 2;
+    }
+    
+    var initGame = function() {
         state = "game";
         
+        console.log("initing game");
+        
         this.camera = new Camera(ctx);
-        camera.setGameViewSize(400, 300);
+        camera.setGameViewSize(canvas.width, canvas.height);
+        camera.setScreenSize(canvas.width, canvas.height);
+        
+        this.gameObjects = [];
         
         this.player = new Player();
-        player.x = 100;
-        player.y = 150 - player.height / 2;
+        player.x = 0;
+        player.y = canvas.height / 2 - player.height / 2;
+        this.player.xSpeed = 4;
         
-        this.gameObjects = [player];
+        var barriers = initBarriers();
+        
+        this.gameObjects.push(player);
+        this.gameObjects = this.gameObjects.concat(barriers);
+        
+        var thisGame = this;
+        canvas.addEventListener("mousemove", function(evt) { moveHandler(evt, thisGame); });
     }
     
     this.start = function() {
         console.log("game started");
-        setInterval(gameLoop, 1000/FPS);
+        setInterval(gameLoop, 1000 / FPS);
     }
 }
 

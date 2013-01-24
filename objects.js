@@ -7,11 +7,13 @@ function makeIntoGameObject(obj) {
 
 function Player() {
     makeIntoGameObject(this);
-    this.width = 10;
-    this.height = 10;
+    this.width = 20;
+    this.height = 20;
     
-    this.speed = 0;
-    this.acceleration = 0;
+    this.xSpeed = 0;
+    this.xAcceleration = 0;
+    this.ySpeed = 0;
+    this.yAcceleration = 0;
     
     this.draw = function(camera) {
         var bounds = camera.getObjectBoundsOnScreen(this);
@@ -24,12 +26,29 @@ function Player() {
     };
     
     this.update = function() {
-        this.x += this.speed;
-        this.speed += this.acceleration;
-        this.acceleration *= .95;
+        this.x += this.xSpeed;
+        this.xSpeed += this.xAcceleration;
+        this.xAcceleration *= .95;
         
-        //arbitrary testing stuff
-        if(this.x > 400)
-            this.x = 0;
+        this.y += this.ySpeed;
+        this.ySpeed += this.yAcceleration;
+        this.yAcceleration *= .95;
     };
+}
+
+function Barrier(width, height) {
+    makeIntoGameObject(this);
+    this.width = width;
+    this.height = height;
+    
+    this.draw = function(camera) {
+        var bounds = camera.getObjectBoundsOnScreen(this);
+        if(bounds === null)
+            return;
+        
+        var ctx = camera.ctx;
+        ctx.fillStyle = "green";
+        ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+    };
+    
 }

@@ -6,6 +6,12 @@ function Camera(ctx) {
         this.gameY = y;
     };
     
+    /* obj must have the properties x, y, width, and height */
+    this.centerViewOn = function(obj) {
+        this.gameX = obj.x + obj.width / 2 - this.gameViewWidth / 2;
+        this.gameY = obj.y + obj.height / 2 - this.gameViewHeight / 2;
+    };
+    
     this.setGameViewSize = function(width, height) {
         this.gameViewWidth = width;
         this.gameViewHeight = height;
@@ -24,7 +30,7 @@ function Camera(ctx) {
     /* obj must have properties x, y, width, and height */
     this.getObjectBoundsOnScreen = function(obj) {
         var gameBoundingBox = {x:this.gameX, y:this.gameY, width:this.gameViewWidth, height:this.gameViewHeight};
-        if(!utils.doIntersect(gameBoundingBox, obj))
+        if(!utils.doesIntersect(gameBoundingBox, obj))
             return null;
         
         var horizontalScale = this.screenWidth / this.gameViewWidth;
