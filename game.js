@@ -41,6 +41,8 @@ function Menu(startGameCallback) {
         var y = evt.pageY - canvas.offsetTop;
         
         if (x > bX && x < bX + bWidth && y > bY && y < bY + bHeight) {
+            canvas.removeEventListener("mousemove", moveHandler);
+            canvas.removeEventListener("mousedown", clickHandler);
             startGameCallback();
         }
     }
@@ -52,23 +54,47 @@ function Menu(startGameCallback) {
 
 function Game() {
     var FPS = 60;
-    var i = 0;
-    var inMenu = true;
+    var state = "menu";
+    var loopCount = 0;
     
     var menu = new Menu(function() {
-        inMenu = false;
+        initGame();
     });
     
     function gameLoop() {
-        i = (i + 1) % FPS;
+        loopCount++;
+        ctx.clearRect(0, 0, 800, 600);
         
-        if (inMenu){
+        if (state === "menu"){
             menu.draw();
-        } else {
-            ctx.clearRect(0, 0, 800, 600);
-            ctx.fillStyle = "orange";
-            ctx.fillRect(300 + i * 2,200, 100, 100);
         }
+        else if (state === "game") {
+            for(var i = 0; i < this.gameObjects.length; i++) {
+                var obj = this.gameObjects[i];                
+                if(obj.update)
+                    obj.update();
+                if(obj.draw)
+                    obj.draw(this.camera);
+            }
+            
+            if((loopCount % 100) === 0) {
+                console.log("accelerating???");
+                this.player.acceleration = ((Math.floor(loopCount / 100) % 2) * 2 - 1) * .2;
+            }
+        }
+    }
+    
+    function initGame() {
+        state = "game";
+        
+        this.camera = new Camera(ctx);
+        camera.setGameViewSize(400, 300);
+        
+        this.player = new Player();
+        player.x = 100;
+        player.y = 150 - player.height / 2;
+        
+        this.gameObjects = [player];
     }
     
     this.start = function() {

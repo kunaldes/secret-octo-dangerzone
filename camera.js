@@ -1,4 +1,4 @@
-function Camera = function(ctx) {
+function Camera(ctx) {
     this.ctx = ctx;
     
     this.setGamePosition = function(x, y) {
@@ -23,7 +23,7 @@ function Camera = function(ctx) {
     
     /* obj must have properties x, y, width, and height */
     this.getObjectBoundsOnScreen = function(obj) {
-        var gameBoundingBox = {x:gameX, y:gameY, width:gameViewWidth, height:gameViewHeight};
+        var gameBoundingBox = {x:this.gameX, y:this.gameY, width:this.gameViewWidth, height:this.gameViewHeight};
         if(!utils.doIntersect(gameBoundingBox, obj))
             return null;
         
@@ -40,8 +40,8 @@ function Camera = function(ctx) {
     };
     
     //set defaults:
-    setGamePosition(0, 0);
-    setGameViewSize(100, 100);
-    setScreenPosition(0, 0);
-    setScreenSize(800, 600);
+    this.setGamePosition(0, 0);
+    this.setGameViewSize(100, 100);
+    this.setScreenPosition(0, 0);
+    this.setScreenSize(800, 600);
 }

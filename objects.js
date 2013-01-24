@@ -5,13 +5,13 @@ function makeIntoGameObject(obj) {
     obj.height = 0;
 }
 
-function Player = function() {
+function Player() {
     makeIntoGameObject(this);
     this.width = 10;
     this.height = 10;
     
-    this.speed = 1;
-    this.acceleration = 1;
+    this.speed = 0;
+    this.acceleration = 0;
     
     this.draw = function(camera) {
         var bounds = camera.getObjectBoundsOnScreen(this);
@@ -24,8 +24,12 @@ function Player = function() {
     };
     
     this.update = function() {
-        this.setX(this.x + speed);
+        this.x += this.speed;
         this.speed += this.acceleration;
         this.acceleration *= .95;
+        
+        //arbitrary testing stuff
+        if(this.x > 400)
+            this.x = 0;
     };
 }
