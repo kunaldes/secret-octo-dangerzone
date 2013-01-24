@@ -47,8 +47,10 @@ function Menu(startGameCallback) {
         }
     }
     
-    canvas.addEventListener("mousemove", moveHandler);
-    canvas.addEventListener("mousedown", clickHandler);
+    this.startMenu = function() {
+        canvas.addEventListener("mousemove", moveHandler);
+        canvas.addEventListener("mousedown", clickHandler);
+    }
 }
 
 
@@ -61,6 +63,8 @@ function Game() {
         initGame();
     });
     
+    menu.startMenu();
+    
     function gameLoop() {
         loopCount++;
         ctx.clearRect(0, 0, 800, 600);
@@ -71,14 +75,13 @@ function Game() {
         else if (state === "game") {
             for(var i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];                
-                if(obj.update)
+                if(typeof(obj.update) === "function")
                     obj.update();
-                if(obj.draw)
+                if(typeof(obj.draw) === "function")
                     obj.draw(this.camera);
             }
             
             if((loopCount % 100) === 0) {
-                console.log("accelerating???");
                 this.player.acceleration = ((Math.floor(loopCount / 100) % 2) * 2 - 1) * .2;
             }
         }
