@@ -2,8 +2,8 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 function Menu(startGameCallback) {
-    var startColor = "green";
-    var helpColor = "green";
+    var startColor = "#0099FF";
+    var helpColor = "#0099FF";
     
     var bX = 200;
     var bY = 100;
@@ -24,15 +24,15 @@ function Menu(startGameCallback) {
         var y = evt.pageY - canvas.offsetTop;
         
         if (x > bX && x < bX + bWidth && y > bY && y < bY + bHeight) {
-            startColor = "red";
+            startColor = "#FF3200";
         } else {
-            startColor = "green";
+            startColor = "#0099FF";
         }
         
         if (x > bX && x < bX + bWidth && y > bY + bHeight + bPadding && y < bY + 2*bHeight + bPadding) {
-            helpColor = "red";
+            helpColor = "#FF3200";
         } else {
-            helpColor = "green";
+            helpColor = "#0099FF";
         }
     }
     
@@ -62,7 +62,7 @@ function Game() {
     var menu = new Menu(function() {
         initGame();
     });
-        
+    
     var moveHandler = function(evt, thisGame) {
         var x = evt.pageX - canvas.offsetLeft;
         var y = evt.pageY - canvas.offsetTop;
@@ -96,10 +96,6 @@ function Game() {
         canvas.addEventListener("mousemove", function(evt) { moveHandler(evt, thisGame); });
     }
     
-    var onPlayerCollision = function() {
-        player.x = 0; //jump to beginning, do more later
-    }
-    
     var gameLoop = function() {
         loopCount++;
         ctx.clearRect(0, 0, 800, 600);
@@ -121,7 +117,7 @@ function Game() {
                 var obj = this.gameObjects[i];
                 if(obj === this.player) continue;
                 if(utils.doesIntersect(this.player, obj))
-                    onPlayerCollision();
+                    obj.handleCollision(this.player);
             }
             
             this.camera.centerViewOn(player);

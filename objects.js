@@ -50,6 +50,10 @@ function Barrier(width, height) {
         ctx.fillStyle = "green";
         ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     };
+    
+    this.handleCollision = function(player) {
+        player.x = 0;
+    }
 }
 
 Barrier.generateBarriers = function() {
@@ -85,3 +89,28 @@ Barrier.generateBarriers = function() {
     
     return barriers;
 }
+
+
+function Pellet() {
+    makeIntoGameObject(this);
+    var frac_amt = 0.7;
+    
+    this.width = 5;
+    this.height = 5;
+    
+    this.draw = function(camera) {
+        var bounds = camera.getObjectBoundsOnScreen(this);
+        if(bounds === null)
+            return;
+        
+        var ctx = camera.ctx;
+        ctx.fillStyle = "blue";
+        ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+    };
+    
+    this.handleCollision = function(player) {
+        player.width *= frac_amt;
+        player.height *= frac_amt;
+    }
+}
+
