@@ -102,13 +102,10 @@ function Game() {
         this.sideCamera.setScreenSize(sideCameraWidth, canvas.height/2);
         
         this.cameras = [this.playerCamera, this.sideCamera];
-
     }
     
     this.initGame = function() {
         state = "game";
-        
-        console.log("initing game");
         
         this.initCameras();
         
@@ -120,9 +117,7 @@ function Game() {
         this.gameObjects = [];
         this.gameObjects.push(this.player);
         
-        var barriers = Barrier.generateBarriers();
-        this.gameObjects = this.gameObjects.concat(barriers);
-        
+        this.obstacleManager = new ObstacleManager(this);
         
         var thisGame = this;
         canvas.addEventListener("mousemove", function(evt) { moveHandler(evt, thisGame); });
@@ -137,8 +132,15 @@ function Game() {
         this.gameObjects.splice(index, 1); //delete from array
     };
     
-    this.isObjectOnScreen = function(obj) {
-        return this.playerCamera.getObjectBoundsOnScreen(obj) !== null;
+    this.isBehindPlayerView = function(obj) {
+        return obj.x < this.player.x - this.playerCamera.gameViewWidth / 2;
+    }
+    
+    this.handlePlayerCollision = function(obj) {
+        if(obj.isDeadly) {
+            this.player.x = 0;
+            this.obstacleManager.reset();
+        }
     }
     
     this.gameLoop = function() {
@@ -162,9 +164,12 @@ function Game() {
             for(i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];
                 if(obj === this.player) continue;
-                if(utils.doesIntersect(this.player, obj))
-                    obj.handleCollision(this.player);
+                if(utils.doesIntersect(this.player, obj)) {
+                    this.handlePlayerCollision(obj);
+                }
             }
+            
+            this.obstacleManager.update();
             
             this.playerCamera.centerViewOn(this.player);
             this.sideCamera.setGamePosition(this.playerCamera.gameX, this.sideCamera.gameY);
@@ -194,6 +199,50 @@ function Game() {
         menu.startMenu();
     }
 }
+
+function ObstacleManager(game) {
+    this.numObstacles = 20;
+    this.obstacles = [];
+    
+    this.fillObstacles = function() {
+        while (this.obstacles.length < this.numObstacles) {
+            var newObstacle = Barrier.createColumnObstacle(this.obstaclesGenerated, this.numObstacles);
+            
+            this.obstacles.push(newObstacle);
+            game.addGameObj(newObstacle.top);
+            game.addGameObj(newObstacle.bottom);
+            
+            this.obstaclesGenerated++;
+        }
+    }
+    
+    this.update = function() {
+        for(var i = this.obstacles.length - 1; i >= 0; i--) {
+            var obstacle = this.obstacles[i];
+            if(game.isBehindPlayerView(obstacle.top)) {
+                this.obstacles.splice(i, 1);
+                game.removeGameObj(obstacle.top);
+                game.removeGameObj(obstacle.bottom);
+            }
+        }
+        this.fillObstacles();
+    };
+    
+    this.reset = function() {
+        for(var i = 0; i < this.obstacles.length; i++) {
+            var obstacle = this.obstacles[i];
+            game.removeGameObj(obstacle.top);
+            game.removeGameObj(obstacle.bottom);
+        }
+        this.obstacles = [];
+        this.obstaclesGenerated = 0;
+        
+        this.fillObstacles();
+    }
+    
+    this.reset();
+}
+
 
 var game = new Game();
 game.start();

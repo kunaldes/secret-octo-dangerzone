@@ -3,6 +3,8 @@ function makeIntoGameObject(obj) {
     obj.y = 0;
     obj.width = 0;
     obj.height = 0;
+    
+    obj.isDeadly = false;
 }
 
 function Player() {
@@ -35,13 +37,14 @@ function Barrier(width, height) {
     makeIntoGameObject(this);
     this.width = width;
     this.height = height;
+    this.isDeadly = true;
     
     this.draw = function(ctx) {
         ctx.fillStyle = "green";
         ctx.fillRect(0, this.y, this.width, this.height);
     };
     
-    this.handleCollision = function(player) {
+    this.handleCollision = function(game) {
         player.x = 0;
     }
 }
@@ -80,6 +83,34 @@ Barrier.generateBarriers = function() {
     return barriers;
 }
 
+Barrier.createColumnObstacle = function(i, maxObstacles) {
+    var startX = 400;
+    var spaceBetween = 400;
+    
+    var width = 10;
+    var maxGap = 100;
+    var minGap = 30;
+    
+    var heightBeyondScreen = canvas.height / 2;
+    
+    //generate gap
+    var progress = i / (maxObstacles - 1);
+    var randomFactor = Math.random() * .5 + .75;
+    
+    var gapHeight = maxGap - progress * randomFactor * (maxGap - minGap);
+    var gapStartY = Math.random() * (canvas.height - gapHeight);
+    
+    var topBarrier = new Barrier(width, gapStartY + heightBeyondScreen);
+    topBarrier.x = spaceBetween * i + startX;
+    topBarrier.y = -heightBeyondScreen;
+        
+    var bottomBarrier = new Barrier(width, canvas.height - gapHeight - gapStartY + heightBeyondScreen);
+    bottomBarrier.x = spaceBetween * i + startX;
+    bottomBarrier.y = gapStartY + gapHeight;
+    
+    return {top:topBarrier, bottom:bottomBarrier};
+}
+
 function Pellet() {
     makeIntoGameObject(this);
     var frac_amt = 0.7;
@@ -89,7 +120,7 @@ function Pellet() {
     
     this.draw = function(ctx) {
         ctx.fillStyle = "blue";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(0, this.y, this.width, this.height);
     };
     
     this.handleCollision = function(player) {
