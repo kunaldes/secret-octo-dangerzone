@@ -45,6 +45,16 @@ function Camera(ctx) {
         return screenBB;
     };
     
+    this.transformContext = function(ctx) {
+        ctx.save();
+        ctx.translate(this.gameX, this.gameY);
+        ctx.scale(this.screenWidth / this.gameViewWidth, this.screenHeight / this.gameViewHeight);
+    }
+    
+    this.restoreContext = function(ctx) {
+        ctx.restore();
+    }
+    
     //set defaults:
     this.setGamePosition(0, 0);
     this.setGameViewSize(100, 100);
