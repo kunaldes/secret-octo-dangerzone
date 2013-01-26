@@ -1,5 +1,6 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
+var FPS = 60;
 
 function Menu(startGameCallback) {
     var startColor = "#0099FF";
@@ -11,12 +12,22 @@ function Menu(startGameCallback) {
     var bHeight = 150;
     var bPadding = 50;
     
+    var particles = [];
+    
     this.draw = function() {
         ctx.fillStyle = startColor;
         ctx.fillRect(bX, bY, bWidth, bHeight);
         
         ctx.fillStyle = helpColor;
         ctx.fillRect(bX, bY + bHeight + bPadding, bWidth, bHeight);
+        
+        for (var i = particles.length - 1; i >= 0; i--){
+            if (particles[i].update(1)) {
+                particles[i].draw(ctx);
+            } else {
+                particles.splice(i, 1);
+            }
+        };
     }
     
     var moveHandler = function(evt) {
@@ -44,6 +55,10 @@ function Menu(startGameCallback) {
             canvas.removeEventListener("mousemove", moveHandler);
             canvas.removeEventListener("mousedown", clickHandler);
             startGameCallback();
+        } else {
+            for(var i = 0; i < 100; i++) { 
+                particles.push(new Particle(x, y, Math.random() * Math.PI*2, Math.random() * 15, 0, .5, 0.9));
+            }
         }
     }
     
@@ -55,7 +70,6 @@ function Menu(startGameCallback) {
 
 
 function Game() {
-    var FPS = 60;
     var state = "menu";
     var loopCount = 0;
     
