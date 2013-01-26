@@ -90,7 +90,6 @@ Barrier.generateBarriers = function() {
     return barriers;
 }
 
-
 function Pellet() {
     makeIntoGameObject(this);
     var frac_amt = 0.7;
@@ -114,3 +113,98 @@ function Pellet() {
     }
 }
 
+/* Infinitely tall with a gap somewhere in the middle) */
+function ColumnObstacle(width) {
+    makeIntoGameObject(this);
+    this.y = Number.NEGATIVE_INFINITY;
+    this.width = width;
+    this.height = Number.POSITIVE_INFINITY;
+    
+    
+    this.setGap = function(gapStartY, gapSize) {
+        this.gapStartY = gapStartY;
+        this.gapSize = gapSize;
+    };
+    
+    this.draw = function(camera) {
+        /*
+        var bounds = camera.getObjectBoundsOnScreen(this);
+        if(bounds === null)
+            return;
+        */
+        var gapBox = {x:this.x, y:this.gapStartY, width:this.width, height:this.gapSize};
+        var gapBounds = camera.getObjectBoundsOnScreen(gapBox);
+        var ctx = camera.ctx;
+        ctx.fillStyle = "green";
+        
+        
+        /*
+        if(gapBounds === null) 
+            console.log(bounds.x, camera.screenY, bounds.width, camera.screenHeight);
+            ctx.fillRect(bounds.x, camera.screenY, bounds.width, camera.screenHeight);
+        else {
+            ctx.fillRect(gapBounds.x, camera.screenY, gapBounds.width, gapBounds.y - camera.screenY);
+            var endGapY = gapBounds.y + gapBounds.height;
+            var endScreenY = camera.screenY + camera.screenHeight;
+            ctx.fillRect(gapBounds.x, endGapY, gapBounds.width, endScreenY - endGapY);
+        } */
+    };
+    
+    this.setGap(0, 50);
+}
+
+
+function ObstacleManager(game) {
+    var numObstacles = 20;
+    
+    var shrinkFraction = .5;
+    var startX = 400;
+    var spaceBetween = 400;
+    
+    var width = 10;
+    var maxGap = 100;
+    var minGap = 30;
+    
+    this.obstaclesGenerated = 0;
+    
+    this.obstacles = [];
+
+    var generateObstacle = function () {
+        var obstacle = new ColumnObstacle(width);
+        
+        //generate gap
+        var progress = this.obstaclesGenerated / (numObstacles - 1);
+        var randomFactor = Math.random() * .5 + .75;
+        var gapHeight = minGap + progress * randomFactor * (maxGap - minGap);
+        var gapStartY = Math.random() * (game.gameHeight - gapHeight);
+        obstacle.setGap(gapStartY, gapHeight);
+        
+        //position
+        obstacle.x = startX + spaceBetween * this.obstaclesGenerated;
+        
+        this.obstaclesGenerated++;
+        return obstacle;
+    };
+    
+    this.update = function() {
+        for(var i = 0; i < this.obstacles.length; i++) {
+            var obstacle = this.obstacles[i];
+            if(!game.isObjectOnScreen(obstacle)) {
+                game.removeGameObj(obstacle);
+                this.obstacles.splice(i, 1);
+                i--;
+                var newObstacle = generateObstacle();
+                game.addGameObj(newObstacle);
+            }
+        }
+    };
+    
+    this.init = function() {
+        for(var i = 0; i < numObstacles; i++) {
+            var newObstacle = generateObstacle();
+            this.obstacles.push(newObstacle);
+            game.addGameObj(newObstacle);
+        }
+    };
+    this.init();
+}
