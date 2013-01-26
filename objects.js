@@ -5,6 +5,22 @@ function makeIntoGameObject(obj) {
     obj.height = 0;
 }
 
+function Background() {
+    makeIntoGameObject(this);
+    this.width = 9601;
+    this.height = canvas.height * 2;
+    
+    this.x = -200;
+    this.y = -canvas.height / 2;
+    
+    this.draw = function(ctx) {
+        fillTex(ctx, globalGraphics.backgroundTexture, this.x, this.y,
+                this.width, this.height);
+    }
+    this.handleCollision = function(player) {
+    }
+}
+
 function Player() {
     makeIntoGameObject(this);
     this.width = 20;
