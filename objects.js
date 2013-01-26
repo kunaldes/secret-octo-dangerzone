@@ -89,7 +89,7 @@ Barrier.createColumnObstacle = function(i, maxObstacles) {
     
     var width = 10;
     var maxGap = 100;
-    var minGap = 30;
+    var minGap = 55;
     
     var heightBeyondScreen = canvas.height / 2;
     
