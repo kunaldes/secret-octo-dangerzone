@@ -141,8 +141,14 @@ function Game() {
     this.handlePlayerCollision = function(obj) {
         if(obj.isDeadly) {
             this.player.x = 0;
+            this.player.resetSize();
             this.obstacleManager.reset();
         }
+        else if(typeof(obj.handleCollision) === "function") {
+            obj.handleCollision(this.player);
+        }
+        if(obj.isPellet)
+            this.obstacleManager.removePellet(obj);
     }
     
     this.gameLoop = function() {
@@ -203,16 +209,39 @@ function Game() {
 
 function ObstacleManager(game) {
     this.numObstacles = 20;
+    var numPelletsPerObstacle = 10;
     this.obstacles = [];
+    this.pellets = [];
+    
+    var startX = 400;
+    var spaceBetween = 400;
+    
+    var width = 10;
+    
+    this.addObstacle = function(x) { 
+        var newObstacle = Barrier.createColumnObstacle(this.obstaclesGenerated / (this.numObstacles - 1), x);
+        this.obstacles.push(newObstacle);
+        game.addGameObj(newObstacle.top);
+        game.addGameObj(newObstacle.bottom);
+    }
+    
+    this.addPellets = function(x) {
+        var pelletGroup = [];
+        for(var i = 0; i < numPelletsPerObstacle; i++) {
+            var pellet = new Pellet();
+            pellet.x = x + Math.random() * (spaceBetween - pellet.width);
+            pellet.y = Math.random() * (canvas.height - pellet.height);
+            pelletGroup.push(pellet);
+            game.addGameObj(pellet);
+        }
+        this.pellets.push(pelletGroup);
+    }
     
     this.fillObstacles = function() {
         while (this.obstacles.length < this.numObstacles) {
-            var newObstacle = Barrier.createColumnObstacle(this.obstaclesGenerated, this.numObstacles);
-            
-            this.obstacles.push(newObstacle);
-            game.addGameObj(newObstacle.top);
-            game.addGameObj(newObstacle.bottom);
-            
+            var x = spaceBetween * this.obstaclesGenerated + startX;
+            this.addObstacle(x);
+            this.addPellets(x - spaceBetween);
             this.obstaclesGenerated++;
         }
     }
@@ -224,10 +253,28 @@ function ObstacleManager(game) {
                 this.obstacles.splice(i, 1);
                 game.removeGameObj(obstacle.top);
                 game.removeGameObj(obstacle.bottom);
+                
+                var pelletGroup = this.pellets[i];
+                for(var j = 0; j < pelletGroup.length; j++)
+                    game.removeGameObj(pelletGroup[j]);
+                this.pellets.splice(i, 1);
             }
         }
         this.fillObstacles();
     };
+    
+    this.removePellet = function(pellet) {
+        for(var i = 0; i < this.pellets.length; i++) {
+            var pelletGroup = this.pellets[i];
+            for(var j = 0; j < pelletGroup.length; j++) {
+                if(pelletGroup[j] == pellet) {
+                    pelletGroup.splice(j, 1);
+                    game.removeGameObj(pellet);
+                    break;
+                }
+            }
+        }
+    }
     
     this.reset = function() {
         for(var i = 0; i < this.obstacles.length; i++) {
@@ -237,6 +284,13 @@ function ObstacleManager(game) {
         }
         this.obstacles = [];
         this.obstaclesGenerated = 0;
+        
+        for(i = 0; i < this.pellets.length; i++) {
+            var pelletGroup = this.pellets[i];
+            for(var j = 0; j < pelletGroup.length; j++)
+                game.removeGameObj(pelletGroup[j]);
+        }
+        this.pellets = [];
         
         this.fillObstacles();
     }

@@ -66,7 +66,7 @@ function InfiniCamera() {
     this.objectTransform = function(ctx, obj) {
         ctx.save();
         
-        var frac = .5;
+        var frac = .3;
         var w = this.screenWidth;
         
         var xScale = this.screenWidth / this.gameViewWidth;

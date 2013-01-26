@@ -30,7 +30,15 @@ function Player() {
         this.y += this.ySpeed;
         this.ySpeed += this.yAcceleration;
         this.yAcceleration *= .95;
+        
+        this.width *= 1.01;
+        this.height *= 1.01;
     };
+    
+    this.resetSize = function() {
+        this.width = 20;
+        this.height = 20;
+    }
 }
 
 function Barrier(width, height) {
@@ -49,44 +57,7 @@ function Barrier(width, height) {
     }
 }
 
-Barrier.generateBarriers = function() {
-    var barriers = [];
-    var numObstacles = 25;
-    var width = 10;
-    var maxGap = 160;
-    var minGap = 30;
-    var xStart = 400;
-    var xSpread = 400;
-    var gapPosition = 10;
-    var heightBeyondScreen = canvas.height / 2;
-    
-    for(var i = 0; i < numObstacles; i++) {
-        var progress = (numObstacles - i) / (numObstacles - 1);
-        var gap = minGap + progress * (maxGap - minGap);
-        //randomize the gap position:
-        gapPosition = (gapPosition * 12453321 + 31) % canvas.height;
-        if(gapPosition > canvas.height - gap)
-            gapPosition = canvas.height - gap;
-            
-        var topBarrier = new Barrier(width, gapPosition + heightBeyondScreen);
-        topBarrier.x = xSpread * i + xStart;
-        topBarrier.y = -heightBeyondScreen;
-        
-        var bottomBarrier = new Barrier(width, canvas.height - gap - gapPosition + heightBeyondScreen);
-        bottomBarrier.x = xSpread * i + xStart;
-        bottomBarrier.y = gapPosition + gap;
-        
-        barriers.push(topBarrier);
-        barriers.push(bottomBarrier);
-    }
-    
-    return barriers;
-}
-
-Barrier.createColumnObstacle = function(i, maxObstacles) {
-    var startX = 400;
-    var spaceBetween = 400;
-    
+Barrier.createColumnObstacle = function(progress, x) {
     var width = 10;
     var maxGap = 100;
     var minGap = 55;
@@ -94,18 +65,17 @@ Barrier.createColumnObstacle = function(i, maxObstacles) {
     var heightBeyondScreen = canvas.height / 2;
     
     //generate gap
-    var progress = i / (maxObstacles - 1);
     var randomFactor = Math.random() * .5 + .75;
     
     var gapHeight = maxGap - progress * randomFactor * (maxGap - minGap);
     var gapStartY = Math.random() * (canvas.height - gapHeight);
     
     var topBarrier = new Barrier(width, gapStartY + heightBeyondScreen);
-    topBarrier.x = spaceBetween * i + startX;
+    topBarrier.x = x;
     topBarrier.y = -heightBeyondScreen;
         
     var bottomBarrier = new Barrier(width, canvas.height - gapHeight - gapStartY + heightBeyondScreen);
-    bottomBarrier.x = spaceBetween * i + startX;
+    bottomBarrier.x = x;
     bottomBarrier.y = gapStartY + gapHeight;
     
     return {top:topBarrier, bottom:bottomBarrier};
@@ -114,6 +84,7 @@ Barrier.createColumnObstacle = function(i, maxObstacles) {
 function Pellet() {
     makeIntoGameObject(this);
     var frac_amt = 0.7;
+    this.isPellet = true;
     
     this.width = 5;
     this.height = 5;
