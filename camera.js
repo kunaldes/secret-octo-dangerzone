@@ -1,5 +1,4 @@
-function Camera(ctx) {
-    this.ctx = ctx;
+function Camera() {
     
     this.setGamePosition = function(x, y) {
         this.gameX = x;
@@ -38,8 +37,9 @@ function Camera(ctx) {
         ctx.closePath();
         ctx.clip();
         
-        ctx.scale(this.screenWidth / this.gameViewWidth, this.screenHeight / this.gameViewHeight);
-        ctx.translate(-this.gameX, -this.gameY);
+        //ctx.scale(1, this.screenHeight / this.gameViewHeight);
+        //ctx.rotate(-.3)
+        ctx.translate(this.screenX, this.screenY);
     }
     
     this.restoreContext = function(ctx) {
@@ -51,4 +51,27 @@ function Camera(ctx) {
     this.setGameViewSize(100, 100);
     this.setScreenPosition(0, 0);
     this.setScreenSize(800, 600);
+}
+
+
+function InfiniCamera() {
+    this.transformContext = function(ctx, camera, obj) {
+        ctx.save();
+        
+        var frac = .5;
+        var w = camera.screenWidth;
+        
+        var cameraScale = camera.screenWidth / camera.gameViewWidth;
+        var objScreenX = cameraScale * (obj.x - camera.gameX);
+        
+        var scale = Math.pow(frac, objScreenX / w);
+        var xtran = w * (1 - scale);
+        
+        ctx.translate(xtran, -camera.gameY);
+        ctx.scale(scale * cameraScale, camera.screenHeight/camera.gameViewHeight);
+    }
+    
+    this.restoreContext = function(ctx) {
+        ctx.restore();
+    }
 }

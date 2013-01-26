@@ -17,7 +17,7 @@ function Player() {
     
     this.draw = function(ctx) {
         ctx.fillStyle = "orange";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(0, this.y, this.width, this.height);
     };
     
     this.update = function() {
@@ -38,7 +38,7 @@ function Barrier(width, height) {
     
     this.draw = function(ctx) {
         ctx.fillStyle = "green";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(0, this.y, this.width, this.height);
     };
     
     this.handleCollision = function(player) {
@@ -87,14 +87,9 @@ function Pellet() {
     this.width = 5;
     this.height = 5;
     
-    this.draw = function(camera) {
-        var bounds = camera.getObjectBoundsOnScreen(this);
-        if(bounds === null)
-            return;
-        
-        var ctx = camera.ctx;
+    this.draw = function(ctx) {
         ctx.fillStyle = "blue";
-        ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     };
     
     this.handleCollision = function(player) {

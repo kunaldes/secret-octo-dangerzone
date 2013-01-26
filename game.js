@@ -99,7 +99,7 @@ function Game() {
         
         this.sideCamera = new Camera(ctx);
         this.sideCamera.setGameViewSize(playerCameraWidth, canvas.height);
-        this.sideCamera.setScreenSize(sideCameraWidth, canvas.height);
+        this.sideCamera.setScreenSize(sideCameraWidth, canvas.height/2);
         
         this.cameras = [this.playerCamera, this.sideCamera];
 
@@ -168,15 +168,18 @@ function Game() {
             
             this.playerCamera.centerViewOn(this.player);
             this.sideCamera.setGamePosition(this.playerCamera.gameX, this.sideCamera.gameY);
-
+            var infiniCamera = new InfiniCamera();
+            
             //draw
             for(i = 0; i < this.cameras.length; i++) {
                 var camera = this.cameras[i];
                 camera.transformContext(ctx);
                 for(j = 0; j < this.gameObjects.length; j++) {
-                    var obj = this.gameObjects[j];  
+                    var obj = this.gameObjects[j];
                     if(typeof(obj.draw) === "function") {
+                        infiniCamera.transformContext(ctx, camera, obj);
                         obj.draw(ctx);
+                        infiniCamera.restoreContext(ctx);
                     }
                 }
                 camera.restoreContext(ctx);
