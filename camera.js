@@ -1,77 +1,109 @@
-function Camera() {
+function camerafy(cam) {
     
-    this.setGamePosition = function(x, y) {
-        this.gameX = x;
-        this.gameY = y;
+    /* Set the (x,y) of this camera within the game world's coordinates */
+    cam.setGamePosition = function(x, y) {
+        cam.gameX = x;
+        cam.gameY = y;
     };
     
-    /* obj must have the properties x, y, width, and height */
-    this.centerViewOn = function(obj) {
-        this.gameX = obj.x + obj.width / 2 - this.gameViewWidth / 2;
-        this.gameY = obj.y + obj.height / 2 - this.gameViewHeight / 2;
+    /* Set the width/height of the camera within the game world's coordinates */
+    cam.setGameViewSize = function(width, height) {
+        cam.gameViewWidth = width;
+        cam.gameViewHeight = height;
     };
     
-    this.setGameViewSize = function(width, height) {
-        this.gameViewWidth = width;
-        this.gameViewHeight = height;
+    /**  
+     * Centers the camera around the specified object in the game world
+     * obj must have the properties x, y, width, and height
+     */
+    cam.centerViewOn = function(obj) {
+        cam.gameX = obj.x + obj.width / 2 - cam.gameViewWidth / 2;
+        cam.gameY = obj.y + obj.height / 2 - cam.gameViewHeight / 2;
     };
     
-    this.setScreenPosition = function(x, y) {
-        this.screenX = x;
-        this.screenY = y;
+    /* Sets the (x,y) on the canvas where this camera should appear */
+    cam.setScreenPosition = function(x, y) {
+        cam.screenX = x;
+        cam.screenY = y;
     };
     
-    this.setScreenSize = function(width, height) {
-        this.screenWidth = width;
-        this.screenHeight = height;
+    /* Sets the width/height on the canvas where this camera should appear */
+    cam.setScreenSize = function(width, height) {
+        cam.screenWidth = width;
+        cam.screenHeight = height;
     };
-
-    this.transformContext = function(ctx) {
+    
+    /* Sets up a clipping shape and set (0,0) to the screen coords */
+    cam.baseTransformation = function(ctx) {
         ctx.save();
         
         ctx.beginPath();
-        ctx.moveTo(this.screenX, this.screenY);
-        ctx.lineTo(this.screenX + this.screenWidth, this.screenY);
-        ctx.lineTo(this.screenX + this.screenWidth, this.screenY + this.screenHeight);
-        ctx.lineTo(this.screenX, this.screenY + this.screenHeight);
+        ctx.moveTo(cam.screenX, cam.screenY);
+        ctx.lineTo(cam.screenX + cam.screenWidth, cam.screenY);
+        ctx.lineTo(cam.screenX + cam.screenWidth, cam.screenY + cam.screenHeight);
+        ctx.lineTo(cam.screenX, cam.screenY + cam.screenHeight);
         ctx.closePath();
         ctx.clip();
         
-        //ctx.scale(1, this.screenHeight / this.gameViewHeight);
-        //ctx.rotate(-.3)
-        ctx.translate(this.screenX, this.screenY);
-    }
+        ctx.translate(cam.screenX, cam.screenY);
+    };
     
-    this.restoreContext = function(ctx) {
+    cam.restoreBaseTransformation = function(ctx) {
         ctx.restore();
-    }
+    };
     
     //set defaults:
-    this.setGamePosition(0, 0);
-    this.setGameViewSize(100, 100);
-    this.setScreenPosition(0, 0);
-    this.setScreenSize(800, 600);
-}
+    cam.setGamePosition(0, 0);
+    cam.setGameViewSize(100, 100);
+    cam.setScreenPosition(0, 0);
+    cam.setScreenSize(800, 600);
+};
 
 
 function InfiniCamera() {
-    this.transformContext = function(ctx, camera, obj) {
+    camerafy(this);
+    
+    this.objectTransform = function(ctx, obj) {
         ctx.save();
         
         var frac = .5;
-        var w = camera.screenWidth;
+        var w = this.screenWidth;
         
-        var cameraScale = camera.screenWidth / camera.gameViewWidth;
-        var objScreenX = cameraScale * (obj.x - camera.gameX);
-        
+        var xScale = this.screenWidth / this.gameViewWidth;
+        var objScreenX = xScale * (obj.x - this.gameX);
         var scale = Math.pow(frac, objScreenX / w);
         var xtran = w * (1 - scale);
         
-        ctx.translate(xtran, -camera.gameY);
-        ctx.scale(scale * cameraScale, camera.screenHeight/camera.gameViewHeight);
-    }
+        var yScale = this.screenHeight / this.gameViewHeight;
+        var objScreenY = yScale * (obj.y - this.gameY);
+        
+        
+        ctx.translate(xtran, objScreenY);
+        ctx.scale(scale * xScale, yScale);
+    };
     
-    this.restoreContext = function(ctx) {
+    this.restoreObjectTransform = function(ctx) {
         ctx.restore();
-    }
+    };
+};
+
+function BaseCamera() {
+    camerafy(this);
+    
+    this.objectTransform = function(ctx, obj) {
+        ctx.save();
+        
+        var xScale = this.screenWidth / this.gameViewWidth;
+        var objScreenX = xScale * (obj.x - this.gameX);
+        
+        var yScale = this.screenHeight / this.gameViewHeight;
+        var objScreenY = yScale * (obj.y - this.gameY);
+        
+        ctx.translate(objScreenX, objScreenY);
+        ctx.scale(xScale, yScale);
+    };
+    
+    this.restoreObjectTransform = function(ctx) {
+        ctx.restore();
+    };
 }
