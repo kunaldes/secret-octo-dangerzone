@@ -75,6 +75,7 @@ function Game() {
     this.gameWidth = canvas.width;
     this.gameHeight = canvas.height;
     var thisGame = this;
+    var highScore = 0;
     
     var menu = new Menu(function() {
         thisGame.initGame();
@@ -197,6 +198,17 @@ function Game() {
                     }
                 }
                 camera.restoreBaseTransformation(ctx);
+            }
+            
+            
+            var width = ctx.measureText("High Score: " + Math.max(this.player.x, highScore)).width;
+            ctx.fillStyle = "#483C32";
+            ctx.fillRect(10,10, width + 10, 40);
+            ctx.fillStyle = "white";
+            ctx.fillText("Score: " + this.player.x, 15, 27);
+            ctx.fillText("High Score: " + highScore, 15, 40);
+            if (this.player.x > highScore) {
+                highScore = this.player.x
             }
         }
     }

@@ -27,5 +27,4 @@ function Particle(x, y, angle, magnitude, gravityX, gravityY, opacity) {
         ctx.fillRect(this.x, this.y, 5, 5);
     }
     
-
 }
