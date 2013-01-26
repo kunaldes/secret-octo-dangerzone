@@ -19,7 +19,7 @@ function Player() {
     
     this.draw = function(ctx) {
         ctx.fillStyle = "orange";
-        ctx.fillRect(0, this.y, this.width, this.height);
+        ctx.fillRect(0, 0, this.width, this.height);
     };
     
     this.update = function() {
@@ -41,7 +41,7 @@ function Barrier(width, height) {
     
     this.draw = function(ctx) {
         ctx.fillStyle = "green";
-        ctx.fillRect(0, this.y, this.width, this.height);
+        ctx.fillRect(0, 0, this.width, this.height);
     };
     
     this.handleCollision = function(game) {
@@ -120,7 +120,7 @@ function Pellet() {
     
     this.draw = function(ctx) {
         ctx.fillStyle = "blue";
-        ctx.fillRect(0, this.y, this.width, this.height);
+        ctx.fillRect(0, 0, this.width, this.height);
     };
     
     this.handleCollision = function(player) {

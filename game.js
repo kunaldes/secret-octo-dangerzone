@@ -92,12 +92,13 @@ function Game() {
         var sideCameraWidth = 150;
         var playerCameraWidth = canvas.width - sideCameraWidth;
         
-        this.playerCamera = new Camera(ctx);
+        this.playerCamera = new InfiniCamera();
         this.playerCamera.setGameViewSize(playerCameraWidth, canvas.height);
         this.playerCamera.setScreenSize(canvas.width - sideCameraWidth, canvas.height);
         this.playerCamera.setScreenPosition(sideCameraWidth, 0);
         
-        this.sideCamera = new Camera(ctx);
+        this.sideCamera = new BaseCamera();
+        this.sideCamera.setScreenPosition(0, canvas.height/2);
         this.sideCamera.setGameViewSize(playerCameraWidth, canvas.height);
         this.sideCamera.setScreenSize(sideCameraWidth, canvas.height/2);
         
@@ -120,6 +121,7 @@ function Game() {
         this.obstacleManager = new ObstacleManager(this);
         
         var thisGame = this;
+
         canvas.addEventListener("mousemove", function(evt) { moveHandler(evt, thisGame); });
     }
     
@@ -173,21 +175,20 @@ function Game() {
             
             this.playerCamera.centerViewOn(this.player);
             this.sideCamera.setGamePosition(this.playerCamera.gameX, this.sideCamera.gameY);
-            var infiniCamera = new InfiniCamera();
             
             //draw
             for(i = 0; i < this.cameras.length; i++) {
                 var camera = this.cameras[i];
-                camera.transformContext(ctx);
+                camera.baseTransformation(ctx);
                 for(j = 0; j < this.gameObjects.length; j++) {
                     var obj = this.gameObjects[j];
                     if(typeof(obj.draw) === "function") {
-                        infiniCamera.transformContext(ctx, camera, obj);
+                        camera.objectTransform(ctx, obj);
                         obj.draw(ctx);
-                        infiniCamera.restoreContext(ctx);
+                        camera.restoreObjectTransform(ctx);
                     }
                 }
-                camera.restoreContext(ctx);
+                camera.restoreBaseTransformation(ctx);
             }
         }
     }
