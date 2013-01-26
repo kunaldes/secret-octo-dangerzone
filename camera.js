@@ -26,29 +26,20 @@ function Camera(ctx) {
         this.screenWidth = width;
         this.screenHeight = height;
     };
-    
-    /* obj must have properties x, y, width, and height */
-    this.getObjectBoundsOnScreen = function(obj) {
-        var gameBoundingBox = {x:this.gameX, y:this.gameY, width:this.gameViewWidth, height:this.gameViewHeight};
-        if(!utils.doesIntersect(gameBoundingBox, obj))
-            return null;
-        
-        var horizontalScale = this.screenWidth / this.gameViewWidth;
-        var verticalScale = this.screenHeight / this.gameViewHeight;
-        
-        var screenBB = {};
-        screenBB.x = this.screenX + (obj.x - this.gameX) * horizontalScale;
-        screenBB.y = this.screenY + (obj.y - this.gameY) * verticalScale;
-        screenBB.width = obj.width * horizontalScale;
-        screenBB.height = obj.height * verticalScale;
-        
-        return screenBB;
-    };
-    
+
     this.transformContext = function(ctx) {
         ctx.save();
-        ctx.translate(this.gameX, this.gameY);
+        
+        ctx.beginPath();
+        ctx.moveTo(this.screenX, this.screenY);
+        ctx.lineTo(this.screenX + this.screenWidth, this.screenY);
+        ctx.lineTo(this.screenX + this.screenWidth, this.screenY + this.screenHeight);
+        ctx.lineTo(this.screenX, this.screenY + this.screenHeight);
+        ctx.closePath();
+        ctx.clip();
+        
         ctx.scale(this.screenWidth / this.gameViewWidth, this.screenHeight / this.gameViewHeight);
+        ctx.translate(-this.gameX, -this.gameY);
     }
     
     this.restoreContext = function(ctx) {

@@ -100,6 +100,9 @@ function Game() {
         this.sideCamera = new Camera(ctx);
         this.sideCamera.setGameViewSize(playerCameraWidth, canvas.height);
         this.sideCamera.setScreenSize(sideCameraWidth, canvas.height);
+        
+        this.cameras = [this.playerCamera, this.sideCamera];
+
     }
     
     this.initGame = function() {
@@ -116,8 +119,6 @@ function Game() {
         
         this.gameObjects = [];
         this.gameObjects.push(this.player);
-        
-        //this.obstacleManager = new ObstacleManager(this);
         
         var barriers = Barrier.generateBarriers();
         this.gameObjects = this.gameObjects.concat(barriers);
@@ -149,13 +150,13 @@ function Game() {
         }
         else if (state === "game") {
             //update
-            for(var i = 0; i < this.gameObjects.length; i++) {
+            var i, j;
+            
+            for(i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];                
                 if(typeof(obj.update) === "function")
                     obj.update();
             }
-            
-            //this.obstacleManager.update();
             
             //check collisions
             for(i = 0; i < this.gameObjects.length; i++) {
@@ -167,14 +168,18 @@ function Game() {
             
             this.playerCamera.centerViewOn(this.player);
             this.sideCamera.setGamePosition(this.playerCamera.gameX, this.sideCamera.gameY);
-            
+
             //draw
-            for(i = 0; i < this.gameObjects.length; i++) {
-                var obj = this.gameObjects[i];  
-                if(typeof(obj.draw) === "function") {
-                    obj.draw(this.playerCamera);
-                    obj.draw(this.sideCamera);
+            for(i = 0; i < this.cameras.length; i++) {
+                var camera = this.cameras[i];
+                camera.transformContext(ctx);
+                for(j = 0; j < this.gameObjects.length; j++) {
+                    var obj = this.gameObjects[j];  
+                    if(typeof(obj.draw) === "function") {
+                        obj.draw(ctx);
+                    }
                 }
+                camera.restoreContext(ctx);
             }
         }
     }
