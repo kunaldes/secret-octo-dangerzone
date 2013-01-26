@@ -141,7 +141,7 @@ function Game() {
     this.handlePlayerCollision = function(obj) {
         if(obj.isDeadly) {
             this.player.x = 0;
-            this.player.resetSize();
+            this.player.reset();
             this.obstacleManager.reset();
         }
         else if(typeof(obj.handleCollision) === "function") {
@@ -179,7 +179,9 @@ function Game() {
             
             this.obstacleManager.update();
             
+            var cameraY = this.playerCamera.gameY;
             this.playerCamera.centerViewOn(this.player);
+            this.playerCamera.setGamePosition(this.playerCamera.gameX, cameraY);
             this.sideCamera.setGamePosition(this.playerCamera.gameX, this.sideCamera.gameY);
             
             //draw

@@ -13,7 +13,7 @@ function Player() {
     this.height = 20;
     
     this.xSpeed = 0;
-    this.xAcceleration = 0;
+    this.xAcceleration = 0.003;
     this.ySpeed = 0;
     this.yAcceleration = 0;
     
@@ -25,7 +25,7 @@ function Player() {
     this.update = function() {
         this.x += this.xSpeed;
         this.xSpeed += this.xAcceleration;
-        this.xAcceleration *= .95;
+        //this.xAcceleration *= .95;
         
         this.y += this.ySpeed;
         this.ySpeed += this.yAcceleration;
@@ -35,9 +35,11 @@ function Player() {
         this.height *= 1.01;
     };
     
-    this.resetSize = function() {
+    this.reset = function() {
         this.width = 20;
         this.height = 20;
+        
+        this.xSpeed = 4;
     }
 }
 
@@ -59,8 +61,8 @@ function Barrier(width, height) {
 
 Barrier.createColumnObstacle = function(progress, x) {
     var width = 10;
-    var maxGap = 100;
-    var minGap = 55;
+    var maxGap = 130;
+    var minGap = 100;
     
     var heightBeyondScreen = canvas.height / 2;
     
@@ -95,7 +97,13 @@ function Pellet() {
     };
     
     this.handleCollision = function(player) {
+        var pWidth = player.width;
+        var pHeight = player.height;
+        
         player.width *= frac_amt;
         player.height *= frac_amt;
+        
+        player.x -= (player.width - pWidth) / 2;
+        player.y -= (player.height - pHeight) / 2;
     }
 }
