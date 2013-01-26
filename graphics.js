@@ -1,5 +1,5 @@
 function Graphics() {
-    this.barrierTexture = new Texture("terrain.png", 0, 0, 16, 16, 1);
+    this.barrierTexture = new Texture("terrain.png", 127, 0, 16, 16, 1);
 }
 
 function Texture(fileName, x, y, width, height, scale) {
