@@ -11,16 +11,19 @@ function Graphics() {
     this.addImage("terrain.png");
     this.addImage("Doom-LostSoul.png");
     this.addImage("trainersprites.png");
+    this.addImage("sand2.png");
         
     var terrain = this.images["terrain.png"];
     var lostSoul = this.images["Doom-LostSoul.png"];
     var trainer = this.images["trainersprites.png"];
+    var sand = this.images["sand2.png"];
         
     // Textures
     this.barrierTexture = new Texture(terrain, 96, 64, 16, 16, 2, false);
     this.playerTexture = new Texture(terrain, 128, 112, 16, 16, 1, true);
     this.backgroundTexture = new Texture(terrain, 32, 16, 16, 16, 4, false);
     this.pelletTexture = new Texture(terrain, 192, 128, 16, 16, 1, true);
+    this.sandTexture = new Texture(sand, 0, 0, 96, 96, 4, false);
     
     // Animations
     this.lostSoulStanding = new Animation(lostSoul,

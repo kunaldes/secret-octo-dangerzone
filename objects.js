@@ -97,7 +97,7 @@ function Background(width, height) {
     this.isDeadly = false;
     
     this.draw = function(ctx) {
-        fillTex(ctx, globalGraphics.backgroundTexture, 0, 0,
+        fillTex(ctx, globalGraphics.sandTexture, 0, 0,
                 this.width, this.height);
     };
     
@@ -105,8 +105,8 @@ function Background(width, height) {
 }
 Background.createBackground = function(x) {
         var width = 400;
-        var heightBeyondScreen = canvas.height / 2;
-        var background = new Background(width, canvas.height + 2*heightBeyondScreen);
+        var heightBeyondScreen = 0;//canvas.height / 2;
+        var background = new Background(width, canvas.height);
         background.x = x;
         background.y = -heightBeyondScreen;
         return background;
