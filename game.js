@@ -245,6 +245,13 @@ function Game() {
                 camera.restoreBaseTransformation(ctx);
             }
 
+            ctx.save();
+            ctx.rotate( - Math.PI / 2);
+            fillTex(ctx, globalGraphics.barrierTexture, 
+                        -this.playerCamera.screenHeight - 8, 0,
+                        16, this.playerCamera.screenWidth);
+            ctx.restore();
+            
             var score = Math.round(this.player.x);
             var width = ctx.measureText("High Score: " + Math.max(score, highScore)).width;
             ctx.fillStyle = "#483C32";
