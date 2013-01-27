@@ -85,7 +85,7 @@ function Game() {
         var playerY = scaleY * y - this.player.height / 2;
         
         var minY = 0;
-        var maxY = canvas.height - this.player.height;
+        var maxY = canvas.height - this.player.height - 10;
         playerY = Math.max(minY, playerY);
         playerY = Math.min(maxY, playerY);
         
@@ -172,14 +172,27 @@ function Game() {
             this.player.setAnimation(3, 0);
             this.player.xSpeed = 0;
             this.gameIsOver = true;
+            if(thisGame.scoreLabel !== undefined)
+                this.removeGameObj(thisGame.scoreLabel);
             
             console.log(this.player.animations[3], this.player.animations[3].duration() * 50);
             
             setTimeout(function() {
+                thisGame.scoreLabel = new ScoreLabel(Math.round(thisGame.player.x), ctx);
+                
                 thisGame.gameIsOver = false;
                 thisGame.player.x = 0;
                 thisGame.player.reset();
                 thisGame.obstacleManager.reset();
+                if(thisGame.mouseDown)
+                    thisGame.player.setAnimation(2);
+                else
+                    thisGame.player.setAnimation(0);
+                
+                thisGame.scoreLabel.x = thisGame.player.x - thisGame.scoreLabel.width - 5;
+                thisGame.scoreLabel.y = thisGame.playerCamera.gameViewHeight / 2 - thisGame.scoreLabel.height / 2;
+                thisGame.addGameObj(thisGame.scoreLabel);
+                
             }, this.player.animations[3].duration() * 50);
         }
         else if(typeof(obj.handleCollision) === "function") {
@@ -253,6 +266,7 @@ function Game() {
             ctx.restore();
             
             var score = Math.round(this.player.x);
+            ctx.font = "12px Arial";
             var width = ctx.measureText("High Score: " + Math.max(score, highScore)).width;
             ctx.fillStyle = "#483C32";
             ctx.fillRect(10,10, width + 10, 40);

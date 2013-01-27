@@ -188,3 +188,23 @@ function ParticleObject(x, y, angle, magnitude, opacityMult) {
         }
     }
 }
+
+function ScoreLabel(score, ctx) {
+    makeIntoGameObject(this);
+    var myText = "You scored: " + score;
+    ctx.font = "18px Arial";
+    this.width = ctx.measureText(myText).width + 10;
+    this.height = 30;
+        
+    this.draw = function(ctx) {
+        ctx.font = "18px Arial";
+        ctx.fillStyle = "#483C32";
+        ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillStyle = "white";
+        ctx.fillText(myText, 5, this.height / 2 + 5);
+    }
+    
+    this.update = function() {
+        this.x += 3.5;
+    }
+}
