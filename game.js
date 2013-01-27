@@ -139,7 +139,13 @@ function Game() {
         this.player.xSpeed = 4;
         
         this.gameObjects = [];
-        this.gameObjects.push(this.player);
+        
+        this.gameBackgrounds = [];
+        var firstBackground = new Background(this.playerCamera.gameViewWidth,
+                                             this.playerCamera.gameViewHeight);
+        firstBackground.x = -this.playerCamera.gameViewWidth/2;
+        firstBackground.y = this.playerCamera.gameY;
+        this.gameBackgrounds.push(firstBackground);
         
         this.obstacleManager = new ObstacleManager(this);
         
@@ -158,6 +164,15 @@ function Game() {
     this.removeGameObj = function(obj) {
         var index = this.gameObjects.indexOf(obj);
         this.gameObjects.splice(index, 1); //delete from array
+    };
+    
+    this.addGameBackground = function(obj) {
+        this.gameBackgrounds.push(obj);
+    }
+    
+    this.removeGameBackground = function(obj) {
+        var index = this.gameBackgrounds.indexOf(obj);
+        this.gameBackgrounds.splice(index, 1); //delete from array
     };
     
     this.isBehindPlayerView = function(obj) {
@@ -226,11 +241,11 @@ function Game() {
                 if(typeof(obj.update) === "function")
                     obj.update();
             }
+            this.player.update();
             
             //check collisions
             for(i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];
-                if(obj === this.player) continue;
                 if(utils.doesIntersect(this.player, obj)) {
                     this.handlePlayerCollision(obj);
                 }
@@ -243,7 +258,22 @@ function Game() {
             this.playerCamera.setGamePosition(this.playerCamera.gameX, cameraY);
             this.bottomCamera.setGamePosition(this.playerCamera.gameX, this.bottomCamera.gameY);
             
-            //draw
+            // draw backgrounds
+            for(i = 0; i < this.cameras.length; i++) {
+                var camera = this.cameras[i];
+                camera.baseTransformation(ctx);
+                for(j = 0; j < this.gameBackgrounds.length; j++) {
+                    var obj = this.gameBackgrounds[j];
+                    if(typeof(obj.draw) === "function") {
+                        camera.objectTransform(ctx, obj);
+                        obj.draw(ctx);
+                        camera.restoreObjectTransform(ctx);
+                    }
+                }
+                camera.restoreBaseTransformation(ctx);
+            }
+            
+            //draw game
             for(i = 0; i < this.cameras.length; i++) {
                 var camera = this.cameras[i];
                 camera.baseTransformation(ctx);
@@ -255,6 +285,9 @@ function Game() {
                         camera.restoreObjectTransform(ctx);
                     }
                 }
+                camera.objectTransform(ctx, this.player);
+                this.player.draw(ctx);
+                camera.restoreObjectTransform(ctx);
                 camera.restoreBaseTransformation(ctx);
             }
 
@@ -301,7 +334,13 @@ function ObstacleManager(game) {
     this.pellets = [];
     this.particles = [];
     
+    this.backgrounds = [];
     
+    this.addBackground = function(x) {
+        var newBackground = Background.createBackground(x);
+        this.backgrounds.push(newBackground);
+        game.addGameBackground(newBackground);
+    }
     
     this.addObstacle = function(x) { 
         var newObstacle = Barrier.createColumnObstacle(this.obstaclesGenerated / (this.numObstacles - 1), x);
@@ -337,6 +376,7 @@ function ObstacleManager(game) {
             var x = spaceBetween * this.obstaclesGenerated + startX;
             this.addObstacle(x);
             this.addPellets(x - spaceBetween);
+            this.addBackground(x - spaceBetween);
             this.obstaclesGenerated++;
         }
     }
@@ -353,6 +393,10 @@ function ObstacleManager(game) {
                 for(var j = 0; j < pelletGroup.length; j++)
                     game.removeGameObj(pelletGroup[j]);
                 this.pellets.splice(i, 1);
+                
+                var background = this.backgrounds[i];
+                game.removeGameBackground(background);
+                this.backgrounds.splice(i, 1);
             }
         }
         this.fillObstacles();
@@ -400,6 +444,11 @@ function ObstacleManager(game) {
             game.removeGameObj(this.particles[i]);
         }
         this.particles = [];
+        
+        for(i = 0; i < this.backgrounds.length; i++) {
+            game.removeGameBackground(this.backgrounds[i]);
+        }
+        this.backgrounds = [];
         
         this.fillObstacles();
     }

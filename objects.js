@@ -50,8 +50,8 @@ function Player() {
         var aWidth = this.width;
         var aHeight = this.height;
         if (this.animation === 3) {
-            aWidth = this.width * 2;
-            aHeight = this.height * 2;
+            aWidth = this.width * 3;
+            aHeight = this.height * 3;
             aX -= this.width / 2;
             aY -= this.height / 2;
         }
@@ -95,6 +95,28 @@ function Player() {
         this.xSpeed = 5;
     }
 }
+
+function Background(width, height) {
+    makeIntoGameObject(this);
+    this.width = width;
+    this.height = height;
+    this.isDeadly = false;
+    
+    this.draw = function(ctx) {
+        fillTex(ctx, globalGraphics.backgroundTexture, 0, 0,
+                this.width, this.height);
+    };
+    
+    
+}
+Background.createBackground = function(x) {
+        var width = 400;
+        var heightBeyondScreen = canvas.height / 2;
+        var background = new Background(width, canvas.height + 2*heightBeyondScreen);
+        background.x = x;
+        background.y = -heightBeyondScreen;
+        return background;
+    }
 
 function Barrier(width, height) {
     makeIntoGameObject(this);
