@@ -59,8 +59,8 @@ function Player() {
         this.ySpeed += this.yAcceleration;
         this.yAcceleration *= .95;
         
-        this.width *= 1.01;
-        this.height *= 1.01;
+        this.width *= 1.015;
+        this.height *= 1.015;
     };
     
     this.reset = function() {
@@ -89,8 +89,8 @@ function Barrier(width, height) {
 
 Barrier.createColumnObstacle = function(progress, x) {
     var width = 32;
-    var maxGap = 160;
-    var minGap = 140;
+    var maxGap = 180;
+    var minGap = 160;
     
     var heightBeyondScreen = canvas.height / 2;
     

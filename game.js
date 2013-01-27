@@ -161,6 +161,9 @@ function Game() {
             this.player.x = 0;
             this.player.reset();
             this.obstacleManager.reset();
+            
+            this.explosionSound = new Audio("explosion.wav");
+            this.explosionSound.play();
         }
         else if(typeof(obj.handleCollision) === "function") {
             obj.handleCollision(this.player);
@@ -248,7 +251,7 @@ function Game() {
 
 function ObstacleManager(game) {
     this.numObstacles = 20;
-    var numPelletsPerObstacle = 5;
+    var numPelletsPerObstacle = 8;
     
     this.obstacles = [];
     this.pellets = [];
