@@ -15,8 +15,6 @@ function Player() {
     
     this.xSpeed = 0;
     this.xAcceleration = 0.002;
-    this.ySpeed = 0;
-    this.yAcceleration = 0;
     
     this.speedMultiplier = 1;
     
@@ -70,13 +68,9 @@ function Player() {
     };
     
     this.update = function() {
-        this.x += this.xSpeed * this.speedMultiplier;
-        this.xSpeed += this.xAcceleration;
+        this.x += this.xSpeed * this.speedMultiplier * 60 / FPS;
+        this.xSpeed += this.xAcceleration * 60 / FPS;
         //this.xAcceleration *= .95;
-        
-        this.y += this.ySpeed;
-        this.ySpeed += this.yAcceleration;
-        this.yAcceleration *= .95;
         
         var prevWidth = this.width;
         var prevHeight = this.height;
@@ -201,8 +195,8 @@ function ParticleObject(x, y, angle, magnitude, opacityMult) {
     }
     
     this.update = function() {
-        this.x += this.xVel;
-        this.y += this.yVel;
+        this.x += this.xVel * FPS / 60;
+        this.y += this.yVel * FPS / 60;
         this.alpha *= this.opacityMult;
         
         if (this.alpha < 0.001) {
