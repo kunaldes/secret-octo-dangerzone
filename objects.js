@@ -5,6 +5,7 @@ function makeIntoGameObject(obj) {
     obj.height = 0;
     
     obj.isDeadly = false;
+    obj.isPellet = false;
 }
 
 function Player() {
@@ -153,5 +154,37 @@ function Pellet() {
         
         player.x -= (player.width - pWidth) / 2;
         player.y -= (player.height - pHeight) / 2;
+    }
+}
+
+function ParticleObject(x, y, angle, magnitude, opacityMult) {
+    makeIntoGameObject(this);
+    this.alpha = 1.0;
+    this.x = x;
+    this.y = y;
+    this.xVel = Math.cos(angle) * magnitude;
+    this.yVel = Math.sin(angle) * magnitude;
+    this.opacityMult = opacityMult;
+    
+    this.width = 5;
+    this.height = 5;
+    
+    this.isVisible = true;
+    
+    this.draw = function(ctx) {
+        ctx.fillStyle = "black";
+        ctx.globalAlpha = this.alpha;
+        ctx.fillRect(0,0,this.width,this.height);
+        ctx.globalAlpha = 1.0;
+    }
+    
+    this.update = function() {
+        this.x += this.xVel;
+        this.y += this.yVel;
+        this.alpha *= this.opacityMult;
+        
+        if (this.alpha < 0.001) {
+            this.isVisible = false;
+        }
     }
 }
