@@ -19,9 +19,29 @@ function Player() {
     
     this.speedMultiplier = 1;
     
+    this.animation = 0;
+    this.animations = [];
+    this.animations.push(globalGraphics.trainerRunning);
+    this.animationElapsedTime = 0;
+    
     this.draw = function(ctx) {
-        ctx.fillStyle = "orange";
-        ctx.fillRect(0, 0, this.width, this.height);
+        var currentAnimation = this.animations[this.animation];
+        var animationDelay = Math.floor(FPS / currentAnimation.fps);
+        var animationFrames = currentAnimation.xs.length;
+        var elapsedTime = this.animationElapsedTime;
+        var iter = Math.floor((elapsedTime) / animationDelay);
+        ctx.drawImage(currentAnimation.file, currentAnimation.xs[iter],
+                        currentAnimation.ys[iter],
+                        currentAnimation.widths[iter],
+                        currentAnimation.heights[iter],
+                        0, 0, this.width, this.height);
+                        
+        if (elapsedTime === (animationDelay * animationFrames - 1)) {
+            this.animationElapsedTime = 0;
+            this.animation = 0;
+        } else {
+            this.animationElapsedTime++;
+        }
     };
     
     this.update = function() {
@@ -52,8 +72,8 @@ function Barrier(width, height) {
     this.isDeadly = true;
     
     this.draw = function(ctx) {
-        ctx.fillStyle = "green";
-        ctx.fillRect(0, 0, this.width, this.height);
+        fillTex(ctx, globalGraphics.barrierTexture, 0, 0,
+                this.width, this.height);
     };
     
     this.handleCollision = function(game) {
@@ -62,7 +82,7 @@ function Barrier(width, height) {
 }
 
 Barrier.createColumnObstacle = function(progress, x) {
-    var width = 10;
+    var width = 32;
     var maxGap = 160;
     var minGap = 140;
     
@@ -90,12 +110,12 @@ function Pellet() {
     var frac_amt = 0.7;
     this.isPellet = true;
     
-    this.width = 5;
-    this.height = 5;
+    this.width = 16;
+    this.height = 16;
     
     this.draw = function(ctx) {
-        ctx.fillStyle = "blue";
-        ctx.fillRect(0, 0, this.width, this.height);
+        fillTex(ctx, globalGraphics.pelletTexture, 0, 0,
+                this.width, this.height);
     };
     
     this.handleCollision = function(player) {
