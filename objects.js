@@ -21,8 +21,15 @@ function Player() {
     
     this.animation = 0;
     this.animations = [];
+    this.animations.push(globalGraphics.trainerWalking);
     this.animations.push(globalGraphics.trainerRunning);
+    this.animations.push(globalGraphics.trainerBiking);
     this.animationElapsedTime = 0;
+    
+    this.setAnimation = function (n) {
+        this.animation = n;
+        this.animationElapsedTime = 0;
+    }
     
     this.draw = function(ctx) {
         var currentAnimation = this.animations[this.animation];
@@ -38,7 +45,6 @@ function Player() {
                         
         if (elapsedTime === (animationDelay * animationFrames - 1)) {
             this.animationElapsedTime = 0;
-            this.animation = 0;
         } else {
             this.animationElapsedTime++;
         }
