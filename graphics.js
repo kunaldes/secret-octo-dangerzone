@@ -31,8 +31,8 @@ function Graphics() {
         [148, 164, 180], [6, 7, 7], [14, 14, 14], [19, 18, 18], 5);
     this.trainerBiking = new Animation(trainer,
         [102, 123], [116, 116], [20, 20], [22, 22], 5);
-        
-
+    this.playerExploding = new Animation(lostSoul,
+        [197, 274, 373], [292, 293, 280], [68, 88, 103], [60, 72, 90], 3);
 }
 
 function newImage(source) {
