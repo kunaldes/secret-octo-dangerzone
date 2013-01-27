@@ -90,6 +90,7 @@ function Game() {
     }
     
     this.onMouseMove = function(evt) {
+        if(this.gameIsOver) return;
         var x = evt.pageX - canvas.offsetLeft;
         var y = evt.pageY - canvas.offsetTop;
         
@@ -109,12 +110,15 @@ function Game() {
         if (!this.mouseDown) {
             this.mouseDown = true;
         }
+        
+        if(this.gameIsOver) return;
         this.player.setAnimation(2);
         console.log("mouse Down");
     }
     
     this.onMouseUp = function(evt) {
         this.mouseDown = false;
+        if(this.gameIsOver) return;
         this.player.setAnimation(0);
         console.log("mouse up");
     }
@@ -140,6 +144,7 @@ function Game() {
     this.initGame = function() {
         state = "game";
         
+        this.gameIsOver = false;
         this.initCameras();
         
         this.player = new Player();
@@ -151,7 +156,7 @@ function Game() {
         this.gameObjects.push(this.player);
         
         this.obstacleManager = new ObstacleManager(this);
-        console.log("hi");
+        
         canvas.addEventListener('keydown', function(evt) { thisGame.onKeyDown(evt); } );
         canvas.addEventListener("mousemove", function(evt) { thisGame.onMouseMove(evt); });
         canvas.addEventListener("mousedown", function(evt) { thisGame.onMouseDown(evt); });
@@ -174,13 +179,22 @@ function Game() {
     }
     
     this.handlePlayerCollision = function(obj) {
+        if(this.gameIsOver) return;
         if(obj.isDeadly) {
-            this.player.x = 0;
-            this.player.reset();
-            this.obstacleManager.reset();
-            
             this.explosionSound = new Audio("explosion.wav");
             this.explosionSound.play();
+            this.player.setAnimation(3, 0);
+            this.player.xSpeed = 0;
+            this.gameIsOver = true;
+            
+            console.log(this.player.animations[3], this.player.animations[3].duration() * 50);
+            
+            setTimeout(function() {
+                thisGame.gameIsOver = false;
+                thisGame.player.x = 0;
+                thisGame.player.reset();
+                thisGame.obstacleManager.reset();
+            }, this.player.animations[3].duration() * 50);
         }
         else if(typeof(obj.handleCollision) === "function") {
             obj.handleCollision(this.player);

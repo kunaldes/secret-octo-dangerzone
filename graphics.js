@@ -98,6 +98,10 @@ function Animation(file, xs, ys, widths, heights, fps) {
     this.ys = ys;
     this.widths = widths;
     this.heights = heights;
+    
+    this.duration = function() {
+        return this.fps * this.xs.length;
+    }
 }
 
 function tileTex(ctx, texture, x, y, width, height) {

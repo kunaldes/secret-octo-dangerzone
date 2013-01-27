@@ -91,7 +91,6 @@ function Player() {
         this.height = 10;
         this.y += (prevHeight - this.height) / 2;
         
-        this.setAnimation(3, 0);
         this.xSpeed = 5;
     }
 }
@@ -106,11 +105,6 @@ function Barrier(width, height) {
         fillTex(ctx, globalGraphics.barrierTexture, 0, 0,
                 this.width, this.height);
     };
-    
-    this.handleCollision = function(game) {
-        player.x = 0;
-        player.setAnimation(3, 0);
-    }
 }
 
 Barrier.createColumnObstacle = function(progress, x) {
