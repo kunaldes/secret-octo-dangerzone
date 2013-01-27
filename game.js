@@ -82,6 +82,13 @@ function Game() {
         thisGame.initGame();
     });
     
+    this.onKeyDown = function(evt) {
+        console.log(evt.keyCode);
+        if (evt.keyCode === 65) {
+            this.player.setAnimation(3, 0);
+        }
+    }
+    
     this.onMouseMove = function(evt) {
         var x = evt.pageX - canvas.offsetLeft;
         var y = evt.pageY - canvas.offsetTop;
@@ -144,10 +151,13 @@ function Game() {
         this.gameObjects.push(this.player);
         
         this.obstacleManager = new ObstacleManager(this);
-
+        console.log("hi");
+        canvas.addEventListener('keydown', function(evt) { thisGame.onKeyDown(evt); } );
         canvas.addEventListener("mousemove", function(evt) { thisGame.onMouseMove(evt); });
         canvas.addEventListener("mousedown", function(evt) { thisGame.onMouseDown(evt); });
         canvas.addEventListener("mouseup", function(evt) { thisGame.onMouseUp(evt); });
+        canvas.setAttribute('tabindex','0');
+        canvas.focus();
     }
     
     this.addGameObj = function(obj) {

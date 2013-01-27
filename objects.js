@@ -24,9 +24,16 @@ function Player() {
     this.animations.push(globalGraphics.trainerWalking);
     this.animations.push(globalGraphics.trainerRunning);
     this.animations.push(globalGraphics.trainerBiking);
+    this.animations.push(globalGraphics.playerExploding);
     this.animationElapsedTime = 0;
+    this.animationReset = 0;
     
-    this.setAnimation = function (n) {
+    this.setAnimation = function (n, resetn) {
+        if (resetn === undefined) {
+            this.animationReset = n;
+        } else {
+            this.animationReset = resetn;
+        }
         this.animation = n;
         this.animationElapsedTime = 0;
     }
@@ -37,14 +44,25 @@ function Player() {
         var animationFrames = currentAnimation.xs.length;
         var elapsedTime = this.animationElapsedTime;
         var iter = Math.floor((elapsedTime) / animationDelay);
+        var aX = 0;
+        var aY = 0;
+        var aWidth = this.width;
+        var aHeight = this.height;
+        if (this.animation === 3) {
+            aWidth = this.width * 2;
+            aHeight = this.height * 2;
+            aX -= this.width / 2;
+            aY -= this.height / 2;
+        }
         ctx.drawImage(currentAnimation.file, currentAnimation.xs[iter],
                         currentAnimation.ys[iter],
                         currentAnimation.widths[iter],
                         currentAnimation.heights[iter],
-                        0, 0, this.width, this.height);
+                        aX, aY, aWidth, aHeight);
                         
         if (elapsedTime === (animationDelay * animationFrames - 1)) {
             this.animationElapsedTime = 0;
+            this.animation = this.animationReset;
         } else {
             this.animationElapsedTime++;
         }
@@ -69,13 +87,12 @@ function Player() {
     
     this.reset = function() {
         var prevHeight = this.height;
-        
         this.width = 10;
-        this.height = 10
-        
-        this.xSpeed = 5;
-        
+        this.height = 10;
         this.y += (prevHeight - this.height) / 2;
+        
+        this.setAnimation(3, 0);
+        this.xSpeed = 5;
     }
 }
 
@@ -92,6 +109,7 @@ function Barrier(width, height) {
     
     this.handleCollision = function(game) {
         player.x = 0;
+        player.setAnimation(3, 0);
     }
 }
 
