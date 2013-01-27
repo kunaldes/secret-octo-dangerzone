@@ -76,34 +76,46 @@ function Game() {
     this.gameHeight = canvas.height;
     var thisGame = this;
     var highScore = 0;
+    this.mouseDown = false;
     
     var menu = new Menu(function() {
         thisGame.initGame();
     });
     
-    var moveHandler = function(evt, thisGame) {
+    this.onMouseMove = function(evt) {
         var x = evt.pageX - canvas.offsetLeft;
         var y = evt.pageY - canvas.offsetTop;
         
+        var scaleY = this.playerCamera.gameViewHeight / canvas.height;
         //set player y
-        thisGame.player.y = y - thisGame.player.height / 2;
+        this.player.y = scaleY * y - this.player.height / 2;
+    }
+    
+    this.onMouseDown = function(evt) {
+        this.mouseDown = true;
+        console.log("mouse Down");
+    }
+    
+    this.onMouseUp = function(evt) {
+        this.mouseDown = false;
+        console.log("mouse up");
     }
     
     this.initCameras = function() {
-        var sideCameraWidth = 150;
-        var playerCameraWidth = canvas.width - sideCameraWidth;
+        var bottomCameraHeight = canvas.height / 2;
+        var playerCameraHeight = canvas.height - bottomCameraHeight;
         
         this.playerCamera = new InfiniCamera();
-        this.playerCamera.setGameViewSize(playerCameraWidth, canvas.height);
-        this.playerCamera.setScreenSize(canvas.width - sideCameraWidth, canvas.height);
-        this.playerCamera.setScreenPosition(sideCameraWidth, 0);
+        this.playerCamera.setGameViewSize(canvas.width, canvas.height);
+        this.playerCamera.setScreenSize(canvas.width, playerCameraHeight);
+        this.playerCamera.setScreenPosition(0, 0);
         
-        this.sideCamera = new BaseCamera();
-        this.sideCamera.setScreenPosition(0, canvas.height/2);
-        this.sideCamera.setGameViewSize(playerCameraWidth, canvas.height);
-        this.sideCamera.setScreenSize(sideCameraWidth, canvas.height/2);
+        this.bottomCamera = new BaseCamera();
+        this.bottomCamera.setGameViewSize(canvas.width, canvas.height);
+        this.bottomCamera.setScreenSize(canvas.width, bottomCameraHeight);
+        this.bottomCamera.setScreenPosition(0, canvas.height - bottomCameraHeight);
         
-        this.cameras = [this.playerCamera, this.sideCamera];
+        this.cameras = [this.playerCamera, this.bottomCamera];
     }
     
     this.initGame = function() {
@@ -120,10 +132,10 @@ function Game() {
         this.gameObjects.push(this.player);
         
         this.obstacleManager = new ObstacleManager(this);
-        
-        var thisGame = this;
 
-        canvas.addEventListener("mousemove", function(evt) { moveHandler(evt, thisGame); });
+        canvas.addEventListener("mousemove", function(evt) { thisGame.onMouseMove(evt); });
+        canvas.addEventListener("mousedown", function(evt) { thisGame.onMouseDown(evt); });
+        canvas.addEventListener("mouseup", function(evt) { thisGame.onMouseUp(evt); });
     }
     
     this.addGameObj = function(obj) {
@@ -160,9 +172,14 @@ function Game() {
             menu.draw();
         }
         else if (state === "game") {
-            //update
             var i, j;
             
+            if(this.mouseDown)
+                this.player.speedMultiplier = 2;
+            else
+                this.player.speedMultiplier = 1;
+            
+            //update
             for(i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];                
                 if(typeof(obj.update) === "function")
@@ -183,7 +200,7 @@ function Game() {
             var cameraY = this.playerCamera.gameY;
             this.playerCamera.centerViewOn(this.player);
             this.playerCamera.setGamePosition(this.playerCamera.gameX, cameraY);
-            this.sideCamera.setGamePosition(this.playerCamera.gameX, this.sideCamera.gameY);
+            this.bottomCamera.setGamePosition(this.playerCamera.gameX, this.bottomCamera.gameY);
             
             //draw
             for(i = 0; i < this.cameras.length; i++) {
@@ -200,15 +217,15 @@ function Game() {
                 camera.restoreBaseTransformation(ctx);
             }
             
-            
-            var width = ctx.measureText("High Score: " + Math.max(this.player.x, highScore)).width;
+            var score = Math.round(this.player.x);
+            var width = ctx.measureText("High Score: " + Math.max(score, highScore)).width;
             ctx.fillStyle = "#483C32";
             ctx.fillRect(10,10, width + 10, 40);
             ctx.fillStyle = "white";
-            ctx.fillText("Score: " + this.player.x, 15, 27);
+            ctx.fillText("Score: " + score, 15, 27);
             ctx.fillText("High Score: " + highScore, 15, 40);
-            if (this.player.x > highScore) {
-                highScore = this.player.x
+            if (score > highScore) {
+                highScore = score;
             }
         }
     }
@@ -229,6 +246,7 @@ function ObstacleManager(game) {
     
     var startX = 400;
     var spaceBetween = 400;
+    var pelletSpawnMargin = 75;
     
     var width = 10;
     
@@ -243,8 +261,10 @@ function ObstacleManager(game) {
         var pelletGroup = [];
         for(var i = 0; i < numPelletsPerObstacle; i++) {
             var pellet = new Pellet();
-            pellet.x = x + Math.random() * (spaceBetween - pellet.width);
-            pellet.y = Math.random() * (canvas.height - pellet.height);
+            var pelletSpawnWidth = spaceBetween - pelletSpawnMargin * 2;
+            var pelletSpawnHeight = canvas.height - pelletSpawnMargin * 2;
+            pellet.x = x + pelletSpawnMargin + Math.random() * pelletSpawnWidth;
+            pellet.y = pelletSpawnMargin + Math.random() * pelletSpawnHeight;
             pelletGroup.push(pellet);
             game.addGameObj(pellet);
         }

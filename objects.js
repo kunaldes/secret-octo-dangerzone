@@ -13,9 +13,11 @@ function Player() {
     this.height = 20;
     
     this.xSpeed = 0;
-    this.xAcceleration = 0.003;
+    this.xAcceleration = 0.002;
     this.ySpeed = 0;
     this.yAcceleration = 0;
+    
+    this.speedMultiplier = 1;
     
     this.draw = function(ctx) {
         ctx.fillStyle = "orange";
@@ -23,7 +25,7 @@ function Player() {
     };
     
     this.update = function() {
-        this.x += this.xSpeed;
+        this.x += this.xSpeed * this.speedMultiplier;
         this.xSpeed += this.xAcceleration;
         //this.xAcceleration *= .95;
         
@@ -39,7 +41,7 @@ function Player() {
         this.width = 20;
         this.height = 20;
         
-        this.xSpeed = 4;
+        this.xSpeed = 5;
     }
 }
 
@@ -61,8 +63,8 @@ function Barrier(width, height) {
 
 Barrier.createColumnObstacle = function(progress, x) {
     var width = 10;
-    var maxGap = 130;
-    var minGap = 100;
+    var maxGap = 160;
+    var minGap = 140;
     
     var heightBeyondScreen = canvas.height / 2;
     
