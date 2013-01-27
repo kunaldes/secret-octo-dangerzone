@@ -12,22 +12,12 @@ function Menu(startGameCallback) {
     var bHeight = 150;
     var bPadding = 50;
     
-    var particles = [];
-    
     this.draw = function() {
         ctx.fillStyle = startColor;
         ctx.fillRect(bX, bY, bWidth, bHeight);
         
         ctx.fillStyle = helpColor;
         ctx.fillRect(bX, bY + bHeight + bPadding, bWidth, bHeight);
-        
-        for (var i = particles.length - 1; i >= 0; i--){
-            if (particles[i].update(1)) {
-                particles[i].draw(ctx);
-            } else {
-                particles.splice(i, 1);
-            }
-        };
     }
     
     var moveHandler = function(evt) {
@@ -55,10 +45,6 @@ function Menu(startGameCallback) {
             canvas.removeEventListener("mousemove", moveHandler);
             canvas.removeEventListener("mousedown", clickHandler);
             startGameCallback();
-        } else {
-            for(var i = 0; i < 100; i++) { 
-                particles.push(new Particle(x, y, Math.random() * Math.PI*2, Math.random() * 15, 0, .5, 0.9));
-            }
         }
     }
     
@@ -205,7 +191,7 @@ function Game() {
                     this.handlePlayerCollision(obj);
                 }
             }
-            
+
             this.obstacleManager.update();
             
             var cameraY = this.playerCamera.gameY;
@@ -227,7 +213,7 @@ function Game() {
                 }
                 camera.restoreBaseTransformation(ctx);
             }
-            
+
             var score = Math.round(this.player.x);
             var width = ctx.measureText("High Score: " + Math.max(score, highScore)).width;
             ctx.fillStyle = "#483C32";
@@ -252,9 +238,13 @@ function Game() {
 function ObstacleManager(game) {
     this.numObstacles = 20;
     var numPelletsPerObstacle = 8;
+    var numParticlesPerPellet = 20;
+    var maxParticleSpeed = 10;
+    var particleOpacityMult = .9;
     
     this.obstacles = [];
     this.pellets = [];
+    this.particles = [];
     var startX = 400;
     var spaceBetween = 400;
     var pelletSpawnMargin = 75;
@@ -282,6 +272,14 @@ function ObstacleManager(game) {
         this.pellets.push(pelletGroup);
     }
     
+    this.addParticles = function(x, y) {
+        for (var i = 0; i < numParticlesPerPellet; i++) {
+            var parti = new ParticleObject(x, y, Math.random() * Math.PI * 2, Math.random() * maxParticleSpeed, particleOpacityMult);
+            this.particles.push(parti);
+            game.addGameObj(parti);
+        }
+    }
+    
     this.fillObstacles = function() {
         while (this.obstacles.length < this.numObstacles) {
             var x = spaceBetween * this.obstaclesGenerated + startX;
@@ -306,13 +304,22 @@ function ObstacleManager(game) {
             }
         }
         this.fillObstacles();
+        
+        for (var i = this.particles.length-1; i >= 0; i--) {
+            var parti = this.particles[i]
+            if (!parti.isVisible || game.isBehindPlayerView(parti)) {
+                this.particles.splice(i, 1);
+                game.removeGameObj(parti);
+            }
+        }
     };
     
     this.removePellet = function(pellet) {
+        this.addParticles(pellet.x, pellet.y);
         for(var i = 0; i < this.pellets.length; i++) {
             var pelletGroup = this.pellets[i];
             for(var j = 0; j < pelletGroup.length; j++) {
-                if(pelletGroup[j] == pellet) {
+                if(pelletGroup[j] === pellet) {
                     pelletGroup.splice(j, 1);
                     game.removeGameObj(pellet);
                     break;
@@ -336,6 +343,11 @@ function ObstacleManager(game) {
                 game.removeGameObj(pelletGroup[j]);
         }
         this.pellets = [];
+        
+        for(i = 0; i < this.particles.length; i++) {
+            game.removeGameObj(this.particles[i]);
+        }
+        this.particles = [];
         
         this.fillObstacles();
     }
