@@ -5,6 +5,7 @@ function Graphics() {
     this.barrierTexture = new Texture("terrain.png", 96, 64, 16, 16, 2, false);
     this.playerTexture = new Texture("terrain.png", 128, 112, 16, 16, 1, true);
     this.backgroundTexture = new Texture("terrain.png", 32, 16, 16, 16, 4, false);
+    this.pelletTexture = new Texture("terrain.png", 192, 128, 16, 16, 1, true);
     
     // Animations
     this.lostSoulStanding = new Animation("Doom-LostSoul.png",
@@ -12,7 +13,6 @@ function Graphics() {
     this.trainerRunning = new Animation("trainersprites.png",
                                     [337, 353, 370], [6, 6, 6],
                                     [15, 16, 15], [18, 18, 17], 5);
-                                    // 337 6 15 18; 353 6 16 18; 370 6 15 17
 }
 
 function Texture(fileName, x, y, width, height, scale, stretch) {
