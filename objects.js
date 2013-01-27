@@ -9,8 +9,8 @@ function makeIntoGameObject(obj) {
 
 function Player() {
     makeIntoGameObject(this);
-    this.width = 20;
-    this.height = 20;
+    this.width = 10;
+    this.height = 10;
     
     this.xSpeed = 0;
     this.xAcceleration = 0.002;
@@ -59,15 +59,23 @@ function Player() {
         this.ySpeed += this.yAcceleration;
         this.yAcceleration *= .95;
         
+        var prevWidth = this.width;
+        var prevHeight = this.height;
         this.width *= 1.015;
         this.height *= 1.015;
+        this.x -= (this.width - prevWidth) / 2;
+        this.y -= (this.height - prevHeight) / 2;
     };
     
     this.reset = function() {
-        this.width = 20;
-        this.height = 20;
+        var prevHeight = this.height;
+        
+        this.width = 10;
+        this.height = 10
         
         this.xSpeed = 5;
+        
+        this.y += (prevHeight - this.height) / 2;
     }
 }
 

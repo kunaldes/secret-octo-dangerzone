@@ -86,9 +86,16 @@ function Game() {
         var x = evt.pageX - canvas.offsetLeft;
         var y = evt.pageY - canvas.offsetTop;
         
-        //var scaleY = this.playerCamera.gameViewHeight / canvas.height;
         //set player y
-        this.player.y = y - this.player.height / 2;
+        var scaleY = canvas.height / this.playerCamera.screenHeight;
+        var playerY = scaleY * y - this.player.height / 2;
+        
+        var minY = 0;
+        var maxY = canvas.height - this.player.height;
+        playerY = Math.max(minY, playerY);
+        playerY = Math.min(maxY, playerY);
+        
+        this.player.y = playerY; 
     }
     
     this.onMouseDown = function(evt) {
@@ -255,7 +262,7 @@ function ObstacleManager(game) {
     
     this.obstacles = [];
     this.pellets = [];
-    var startX = 400;
+    var startX = 800;
     var spaceBetween = 400;
     var pelletSpawnMargin = 75;
     
