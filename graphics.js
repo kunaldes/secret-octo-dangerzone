@@ -1,23 +1,48 @@
 var globalGraphics = new Graphics();
 
 function Graphics() {
+    this.addImage = function(source) {
+        this.images[source] = new Image();
+        this.images[source].src = source;
+    }
+
+    // Images
+    this.images = {};
+    this.addImage("terrain.png");
+    this.addImage("Doom-LostSoul.png");
+    this.addImage("trainersprites.png");
+        
+    var terrain = this.images["terrain.png"];
+    var lostSoul = this.images["Doom-LostSoul.png"];
+    var trainer = this.images["trainersprites.png"];
+        
     // Textures
-    this.barrierTexture = new Texture("terrain.png", 96, 64, 16, 16, 2, false);
-    this.playerTexture = new Texture("terrain.png", 128, 112, 16, 16, 1, true);
-    this.backgroundTexture = new Texture("terrain.png", 32, 16, 16, 16, 4, false);
-    this.pelletTexture = new Texture("terrain.png", 192, 128, 16, 16, 1, true);
+    this.barrierTexture = new Texture(terrain, 96, 64, 16, 16, 2, false);
+    this.playerTexture = new Texture(terrain, 128, 112, 16, 16, 1, true);
+    this.backgroundTexture = new Texture(terrain, 32, 16, 16, 16, 4, false);
+    this.pelletTexture = new Texture(terrain, 192, 128, 16, 16, 1, true);
     
     // Animations
-    this.lostSoulStanding = new Animation("Doom-LostSoul.png",
-                                    [66, 66], [15, 68], [32, 32], [47, 53], 5);
-    this.trainerRunning = new Animation("trainersprites.png",
-                                    [337, 353, 370], [6, 6, 6],
-                                    [15, 16, 15], [18, 18, 17], 5);
+    this.lostSoulStanding = new Animation(lostSoul,
+        [66, 66], [15, 68], [32, 32], [47, 53], 5);
+    this.trainerRunning = new Animation(trainer,
+        [337, 353, 370], [6, 6, 6], [15, 16, 15], [18, 18, 17], 5);
+    this.trainerWalking = new Animation(trainer,
+        [148, 164, 180], [6, 7, 7], [14, 14, 14], [19, 18, 18], 5);
+    this.trainerBiking = new Animation(trainer,
+        [102, 123], [116, 116], [20, 20], [22, 22], 5);
+        
+
 }
 
-function Texture(fileName, x, y, width, height, scale, stretch) {
-    this.file = new Image();
-    this.file.src = fileName;
+function newImage(source) {
+    var img = new Image();
+    img.src = source;
+    return img;
+}
+
+function Texture(file, x, y, width, height, scale, stretch) {
+    this.file = file;
     this.x = x;
     this.y = y;
     this.width = width;
@@ -66,10 +91,9 @@ function fillTex(ctx, texture, x, y, width, height) {
     }
 }
 
-function Animation(fileName, xs, ys, widths, heights, fps) {
+function Animation(file, xs, ys, widths, heights, fps) {
     this.fps = fps;
-    this.file = new Image();
-    this.file.src = fileName;
+    this.file = file;
     this.xs = xs;
     this.ys = ys;
     this.widths = widths;

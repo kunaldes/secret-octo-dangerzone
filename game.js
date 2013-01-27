@@ -92,12 +92,16 @@ function Game() {
     }
     
     this.onMouseDown = function(evt) {
-        this.mouseDown = true;
+        if (!this.mouseDown) {
+            this.mouseDown = true;
+        }
+        this.player.setAnimation(2);
         console.log("mouse Down");
     }
     
     this.onMouseUp = function(evt) {
         this.mouseDown = false;
+        this.player.setAnimation(0);
         console.log("mouse up");
     }
     
