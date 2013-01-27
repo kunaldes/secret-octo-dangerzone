@@ -1,9 +1,18 @@
 var globalGraphics = new Graphics();
 
 function Graphics() {
-    this.barrierTexture = new Texture("terrain.png", 128, 0, 16, 16, 2, false);
+    // Textures
+    this.barrierTexture = new Texture("terrain.png", 96, 64, 16, 16, 2, false);
     this.playerTexture = new Texture("terrain.png", 128, 112, 16, 16, 1, true);
-    this.backgroundTexture = new Texture("terrain.png", 48, 32, 16, 16, 4, false);
+    this.backgroundTexture = new Texture("terrain.png", 32, 16, 16, 16, 4, false);
+    
+    // Animations
+    this.lostSoulStanding = new Animation("Doom-LostSoul.png",
+                                    [66, 66], [15, 68], [32, 32], [47, 53], 5);
+    this.trainerRunning = new Animation("trainersprites.png",
+                                    [337, 353, 370], [6, 6, 6],
+                                    [15, 16, 15], [18, 18, 17], 5);
+                                    // 337 6 15 18; 353 6 16 18; 370 6 15 17
 }
 
 function Texture(fileName, x, y, width, height, scale, stretch) {
@@ -21,6 +30,7 @@ function fillTex(ctx, texture, x, y, width, height) {
     if (texture.stretch) {
         ctx.drawImage(texture.file, texture.x, texture.y,
                         texture.width, texture.height, x, y, width, height);
+        return;
     }
     var drawWidth = texture.width * texture.scale;
     var drawHeight = texture.height * texture.scale;
@@ -38,6 +48,12 @@ function fillTex(ctx, texture, x, y, width, height) {
     if ((upperRows - yRatio) < (yRatio - lowerRows)) {
         rows = upperRows;
     }
+    if (cols === 0) {
+        cols = 1;
+    }
+    if (rows === 0) {
+        rows = 1;
+    }
     drawWidth = width / cols
     drawHeight = height / rows
     for (var row = 0; row < rows; row++) {
@@ -48,6 +64,16 @@ function fillTex(ctx, texture, x, y, width, height) {
                             drawWidth, drawHeight);
         }
     }
+}
+
+function Animation(fileName, xs, ys, widths, heights, fps) {
+    this.fps = fps;
+    this.file = new Image();
+    this.file.src = fileName;
+    this.xs = xs;
+    this.ys = ys;
+    this.widths = widths;
+    this.heights = heights;
 }
 
 function tileTex(ctx, texture, x, y, width, height) {
