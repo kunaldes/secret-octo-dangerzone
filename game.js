@@ -139,7 +139,6 @@ function Game() {
         this.player.xSpeed = 4;
         
         this.gameObjects = [];
-        this.gameObjects.push(this.player);
         
         this.obstacleManager = new ObstacleManager(this);
         
@@ -213,11 +212,11 @@ function Game() {
                 if(typeof(obj.update) === "function")
                     obj.update();
             }
+            this.player.update();
             
             //check collisions
             for(i = 0; i < this.gameObjects.length; i++) {
                 var obj = this.gameObjects[i];
-                if(obj === this.player) continue;
                 if(utils.doesIntersect(this.player, obj)) {
                     this.handlePlayerCollision(obj);
                 }
@@ -242,6 +241,9 @@ function Game() {
                         camera.restoreObjectTransform(ctx);
                     }
                 }
+                camera.objectTransform(ctx, this.player);
+                this.player.draw(ctx);
+                camera.restoreObjectTransform(ctx);
                 camera.restoreBaseTransformation(ctx);
             }
 

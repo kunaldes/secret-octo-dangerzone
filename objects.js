@@ -50,8 +50,8 @@ function Player() {
         var aWidth = this.width;
         var aHeight = this.height;
         if (this.animation === 3) {
-            aWidth = this.width * 2;
-            aHeight = this.height * 2;
+            aWidth = this.width * 3;
+            aHeight = this.height * 3;
             aX -= this.width / 2;
             aY -= this.height / 2;
         }
