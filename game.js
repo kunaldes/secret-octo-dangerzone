@@ -86,9 +86,9 @@ function Game() {
         var x = evt.pageX - canvas.offsetLeft;
         var y = evt.pageY - canvas.offsetTop;
         
-        var scaleY = this.playerCamera.gameViewHeight / canvas.height;
+        //var scaleY = this.playerCamera.gameViewHeight / canvas.height;
         //set player y
-        this.player.y = scaleY * y - this.player.height / 2;
+        this.player.y = y - this.player.height / 2;
     }
     
     this.onMouseDown = function(evt) {
@@ -102,7 +102,7 @@ function Game() {
     }
     
     this.initCameras = function() {
-        var bottomCameraHeight = canvas.height / 2;
+        var bottomCameraHeight = 100;
         var playerCameraHeight = canvas.height - bottomCameraHeight;
         
         this.playerCamera = new InfiniCamera();
@@ -111,7 +111,8 @@ function Game() {
         this.playerCamera.setScreenPosition(0, 0);
         
         this.bottomCamera = new BaseCamera();
-        this.bottomCamera.setGameViewSize(canvas.width, canvas.height);
+        this.bottomCamera.setGamePosition(0, 0);
+        this.bottomCamera.setGameViewSize(canvas.width * 5, canvas.height);
         this.bottomCamera.setScreenSize(canvas.width, bottomCameraHeight);
         this.bottomCamera.setScreenPosition(0, canvas.height - bottomCameraHeight);
         
@@ -160,8 +161,11 @@ function Game() {
         else if(typeof(obj.handleCollision) === "function") {
             obj.handleCollision(this.player);
         }
-        if(obj.isPellet)
+        if(obj.isPellet) {
             this.obstacleManager.removePellet(obj);
+            this.eatSound = new Audio("eat.wav");
+            this.eatSound.play();
+        }
     }
     
     this.gameLoop = function() {
@@ -240,10 +244,10 @@ function Game() {
 
 function ObstacleManager(game) {
     this.numObstacles = 20;
-    var numPelletsPerObstacle = 10;
+    var numPelletsPerObstacle = 5;
+    
     this.obstacles = [];
     this.pellets = [];
-    
     var startX = 400;
     var spaceBetween = 400;
     var pelletSpawnMargin = 75;
