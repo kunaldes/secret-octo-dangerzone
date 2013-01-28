@@ -3,23 +3,77 @@ var ctx = canvas.getContext("2d");
 var FPS = 60;
 
 function Menu(startGameCallback) {
-    var startColor = "#0099FF";
-    var helpColor = "#0099FF";
+    var startColor = "#4499FF";
     
-    var bX = 200;
-    var bY = 100;
-    var bWidth = 400;
-    var bHeight = 150;
-    var bPadding = 50;
+    var bX = 300;
+    var bY = 400;
+    var bWidth = 200;
+    var bHeight = 70;
+    
+    var drawMenuBackground = function() {
+        var width = 800;
+        var height = 600;
+        var cactusWidth = 64;
+        fillTex(ctx, globalGraphics.backgroundTexture, 0, 0,
+                    width, height);
+
+        // Cacti
+        fillTex(ctx, globalGraphics.cactusTexture, 0.1 * width,
+                    height * (0.6), cactusWidth, height * (0.4));
+        fillTex(ctx, globalGraphics.cactusTexture, 0.1 * width - cactusWidth * 1.1,
+                    height * 0.75, cactusWidth, height * 0.25);
+        fillTex(ctx, globalGraphics.cactusTexture, 0.1 * width + cactusWidth * 1.1,
+                    height * 0.85, cactusWidth, height * 0.15);
+        fillTex(ctx, globalGraphics.cactusTexture, 0.9 * width,
+                    height * 0.4, cactusWidth, height * 0.6);
+        fillTex(ctx, globalGraphics.cactusTexture, 0.9 * width - cactusWidth * 1.1,
+                    height * 0.65, cactusWidth, height * 0.35);
+
+        // Caketi (?)
+        var cakeHeight = 48;
+        var cakeWidth = 48;
+        var cakex = 0.5 * width;
+        var cakey = 0.85 * height;
+        fillTex(ctx, globalGraphics.pelletTexture, cakex, cakey,
+                cakeWidth, cakeHeight);
+        ctx.save();
+        ctx.translate(cakeWidth * 1.1, cakeHeight * 0.75);
+        fillTex(ctx, globalGraphics.pelletTexture, cakex, cakey,
+                cakeWidth, cakeHeight);
+        ctx.translate(0.1 * cakeWidth, -cakeHeight * 1.1);
+        fillTex(ctx, globalGraphics.pelletTexture, cakex, cakey,
+                cakeWidth, cakeHeight);
+        ctx.restore();
+    }
     
     this.draw = function() {
-        drawMenuBackground(ctx);
-    
+        drawMenuBackground();
+        
+        ctx.save();
+        ctx.font = '60px "Trebuchet MS", Helvetica, sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+        ctx.fillText("Operation", canvas.width/2, 70);
+        ctx.fillText("\"Desert Storm\"", canvas.width/2, 130);
+        
+        ctx.font = '20px "Trebuchet MS", Helvetica, sans-serif';
+        ctx.fillText("You are being pursued by Saddam Hussein's troops on camel back.", canvas.width/2, 200);
+        ctx.fillText("You have entered a cactus field and have but minutes to live.", canvas.width/2, 225);
+        ctx.fillText("Good luck.", canvas.width/2, 250);
+        
+        ctx.fillText("Move your mouse up and down to move.", canvas.width/2, 310);
+        ctx.fillText("Collect cakes to make yourself shrink.", canvas.width/2, 335);
+        ctx.fillText("Hold down the mouse to ride your bike.", canvas.width/2, 360);
+        
+        
         ctx.fillStyle = startColor;
         ctx.fillRect(bX, bY, bWidth, bHeight);
+        ctx.strokeRect(bX, bY, bWidth, bHeight);
         
-        ctx.fillStyle = helpColor;
-        ctx.fillRect(bX, bY + bHeight + bPadding, bWidth, bHeight);
+        ctx.fillStyle = "black";
+        ctx.font = '55px "Arial Black", Gadget, sans-serif';
+        ctx.fillText("PLAY!", canvas.width/2, 455)
+        ctx.restore();
     }
     
     var moveHandler = function(evt) {
@@ -27,15 +81,9 @@ function Menu(startGameCallback) {
         var y = evt.pageY - canvas.offsetTop;
         
         if (x > bX && x < bX + bWidth && y > bY && y < bY + bHeight) {
-            startColor = "#FF3200";
+            startColor = "#FF5511";
         } else {
-            startColor = "#0099FF";
-        }
-        
-        if (x > bX && x < bX + bWidth && y > bY + bHeight + bPadding && y < bY + 2*bHeight + bPadding) {
-            helpColor = "#FF3200";
-        } else {
-            helpColor = "#0099FF";
+            startColor = "#1199FF";
         }
     }
     

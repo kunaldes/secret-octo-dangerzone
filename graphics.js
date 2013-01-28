@@ -39,44 +39,6 @@ function Graphics() {
         [197, 274, 373], [292, 293, 280], [68, 88, 103], [60, 72, 90], 3);
 }
 
-function drawMenuBackground(ctx) {
-    var width = 800;
-    var height = 600;
-    var cactusWidth = 64;
-    fillTex(ctx, globalGraphics.backgroundTexture, 0, 0,
-                width, height);
-    
-    // Cacti
-    fillTex(ctx, globalGraphics.cactusTexture, 0.1 * width,
-                height * (0.6), cactusWidth, height * (0.4));
-    fillTex(ctx, globalGraphics.cactusTexture, 0.1 * width - cactusWidth * 1.1,
-                height * 0.75, cactusWidth, height * 0.25);
-    fillTex(ctx, globalGraphics.cactusTexture, 0.1 * width + cactusWidth * 1.1,
-                height * 0.85, cactusWidth, height * 0.15);
-    fillTex(ctx, globalGraphics.cactusTexture, 0.9 * width,
-                height * 0.4, cactusWidth, height * 0.6);
-    fillTex(ctx, globalGraphics.cactusTexture, 0.9 * width - cactusWidth * 1.1,
-                height * 0.65, cactusWidth, height * 0.35);
-    
-    // Caketi (?)
-    var cakeHeight = 48;
-    var cakeWidth = 48;
-    var cakex = 0.5 * width;
-    var cakey = 0.85 * height;
-    fillTex(ctx, globalGraphics.pelletTexture, cakex, cakey,
-            cakeWidth, cakeHeight);
-    ctx.save();
-    ctx.translate(cakeWidth * 1.1, cakeHeight * 0.75);
-    fillTex(ctx, globalGraphics.pelletTexture, cakex, cakey,
-            cakeWidth, cakeHeight);
-    ctx.translate(0.1 * cakeWidth, -cakeHeight * 1.1);
-    fillTex(ctx, globalGraphics.pelletTexture, cakex, cakey,
-            cakeWidth, cakeHeight);
-    ctx.restore();
-
-    
-}
-
 function newImage(source) {
     var img = new Image();
     img.src = source;
