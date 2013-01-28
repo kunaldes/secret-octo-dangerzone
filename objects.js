@@ -13,6 +13,8 @@ function Player() {
     this.width = 10;
     this.height = 10;
     
+    this.counter = 0;
+    
     this.xSpeed = 0;
     this.xAcceleration = 0.002;
     
@@ -70,12 +72,12 @@ function Player() {
     this.update = function() {
         this.x += this.xSpeed * this.speedMultiplier * 60 / FPS;
         this.xSpeed += this.xAcceleration * 60 / FPS;
-        //this.xAcceleration *= .95;
+        this.counter++;
         
         var prevWidth = this.width;
         var prevHeight = this.height;
-        this.width *= 1.015;
-        this.height *= 1.015;
+        this.width = 10 * Math.exp(this.counter / FPS);
+        this.height = 10 * Math.exp(this.counter / FPS);
         this.x -= (this.width - prevWidth) / 2;
         this.y -= (this.height - prevHeight) / 2;
     };
@@ -84,6 +86,7 @@ function Player() {
         var prevHeight = this.height;
         this.width = 10;
         this.height = 10;
+        this.counter = 0;
         this.y += (prevHeight - this.height) / 2;
         
         this.xSpeed = 5;
@@ -150,7 +153,7 @@ Barrier.createColumnObstacle = function(progress, x) {
 
 function Pellet() {
     makeIntoGameObject(this);
-    var frac_amt = 0.7;
+    var counter_dec = 50;
     this.isPellet = true;
     
     this.width = 24;
@@ -165,8 +168,7 @@ function Pellet() {
         var pWidth = player.width;
         var pHeight = player.height;
         
-        player.width *= frac_amt;
-        player.height *= frac_amt;
+        player.counter -= counter_dec;
         
         player.x -= (player.width - pWidth) / 2;
         player.y -= (player.height - pHeight) / 2;
