@@ -71,7 +71,15 @@ function Game() {
     this.onKeyDown = function(evt) {
         console.log(evt.keyCode);
         if (evt.keyCode === 65) {
-            this.player.setAnimation(3, 0);
+            //this.player.setAnimation(3, 0);
+            this.aKeyDown = true;
+        }
+    }
+    
+    this.onKeyUp = function(evt) {
+        console.log(evt.keyCode);
+        if (evt.keyCode === 65) {
+            this.aKeyDown = false;
         }
     }
     
@@ -150,11 +158,14 @@ function Game() {
         this.obstacleManager = new ObstacleManager(this);
         
         canvas.addEventListener('keydown', function(evt) { thisGame.onKeyDown(evt); } );
+        canvas.addEventListener('keyup', function(evt) { thisGame.onKeyUp(evt); } );
         canvas.addEventListener("mousemove", function(evt) { thisGame.onMouseMove(evt); });
         canvas.addEventListener("mousedown", function(evt) { thisGame.onMouseDown(evt); });
         canvas.addEventListener("mouseup", function(evt) { thisGame.onMouseUp(evt); });
         canvas.setAttribute('tabindex','0');
         canvas.focus();
+        
+        this.prevTime = new Date().getTime();
     }
     
     this.addGameObj = function(obj) {
@@ -222,6 +233,10 @@ function Game() {
     
     this.gameLoop = function() {
         loopCount++;
+        var currTime = new Date().getTime();
+        this.currFPS = 1000 / (currTime - this.prevTime);
+        this.prevTime = currTime;
+        
         ctx.clearRect(0, 0, 800, 600);
         
         if (state === "menu") {
@@ -309,6 +324,16 @@ function Game() {
             ctx.fillText("High Score: " + highScore, 15, 40);
             if (score > highScore) {
                 highScore = score;
+            }
+            
+            if(this.aKeyDown) {
+                var y = 75;
+                var str = "FPS " + Math.round(this.currFPS);
+                var width = ctx.measureText(str).width;
+                ctx.fillStyle = "#483C32";
+                ctx.fillRect(10, y - 15, width + 10, 20);
+                ctx.fillStyle = "white";
+                ctx.fillText(str, 15, y);
             }
         }
     }
