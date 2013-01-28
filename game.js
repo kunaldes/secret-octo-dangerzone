@@ -119,15 +119,12 @@ function Game() {
     });
     
     this.onKeyDown = function(evt) {
-        console.log(evt.keyCode);
         if (evt.keyCode === 65) {
-            //this.player.setAnimation(3, 0);
             this.aKeyDown = true;
         }
     }
     
     this.onKeyUp = function(evt) {
-        console.log(evt.keyCode);
         if (evt.keyCode === 65) {
             this.aKeyDown = false;
         }
@@ -157,14 +154,12 @@ function Game() {
         
         if(this.gameIsOver) return;
         this.player.setAnimation(2);
-        console.log("mouse Down");
     }
     
     this.onMouseUp = function(evt) {
         this.mouseDown = false;
         if(this.gameIsOver) return;
         this.player.setAnimation(0);
-        console.log("mouse up");
     }
     
     this.initCameras = function() {
@@ -250,8 +245,6 @@ function Game() {
             this.gameIsOver = true;
             if(thisGame.scoreLabel !== undefined)
                 this.removeGameObj(thisGame.scoreLabel);
-            
-            console.log(this.player.animations[3], this.player.animations[3].duration() * 50);
             
             setTimeout(function() {
                 thisGame.scoreLabel = new ScoreLabel(Math.round(thisGame.player.x), ctx);
@@ -389,7 +382,6 @@ function Game() {
     }
     
     this.start = function() {
-        console.log("game started");
         setInterval(function() { thisGame.gameLoop(); }, 1000 / FPS);
         
         menu.startMenu();
