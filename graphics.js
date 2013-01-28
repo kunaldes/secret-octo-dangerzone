@@ -1,3 +1,12 @@
+/*
+    graphics.js
+    
+    Authors:
+    Joseph Carlos (jcarlos)
+    Kunal Desai (kunald)
+    James Grugett (jgrugett)
+*/
+
 var globalGraphics = new Graphics();
 
 function Graphics() {

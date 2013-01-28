@@ -1,3 +1,12 @@
+/*
+    game.js
+    
+    Authors:
+    Joseph Carlos (jcarlos)
+    Kunal Desai (kunald)
+    James Grugett (jgrugett)
+*/
+
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 var FPS = 60;

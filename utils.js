@@ -1,3 +1,12 @@
+/*
+    utils.js
+    
+    Authors:
+    Joseph Carlos (jcarlos)
+    Kunal Desai (kunald)
+    James Grugett (jgrugett)
+*/
+
 var utils = function() {
     var exports = {};
     

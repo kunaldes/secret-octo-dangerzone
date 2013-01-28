@@ -1,3 +1,12 @@
+/*
+    objects.js
+    
+    Authors:
+    Joseph Carlos (jcarlos)
+    Kunal Desai (kunald)
+    James Grugett (jgrugett)
+*/
+
 function makeIntoGameObject(obj) {
     obj.x = 0;
     obj.y = 0;

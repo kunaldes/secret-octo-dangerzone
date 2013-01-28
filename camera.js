@@ -1,3 +1,12 @@
+/*
+    camerafy.js
+    
+    Authors:
+    Joseph Carlos (jcarlos)
+    Kunal Desai (kunald)
+    James Grugett (jgrugett)
+*/
+
 function camerafy(cam) {
     
     /* Set the (x,y) of this camera within the game world's coordinates */
