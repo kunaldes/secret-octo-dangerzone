@@ -13,6 +13,8 @@ function Menu(startGameCallback) {
     var bPadding = 50;
     
     this.draw = function() {
+        drawMenuBackground(ctx);
+    
         ctx.fillStyle = startColor;
         ctx.fillRect(bX, bY, bWidth, bHeight);
         
