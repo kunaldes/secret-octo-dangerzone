@@ -241,7 +241,8 @@ function Game() {
                 if(typeof(obj.update) === "function")
                     obj.update();
             }
-            this.player.update();
+            if(!this.gameIsOver)
+                this.player.update();
             
             //check collisions
             for(i = 0; i < this.gameObjects.length; i++) {
