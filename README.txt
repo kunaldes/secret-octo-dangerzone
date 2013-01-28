@@ -1,4 +1,4 @@
-Operation Desert Storm
+Operation "Desert Storm"
 15-237 S13 HW 1
 
 Authors:
@@ -57,4 +57,7 @@ trainersprites.png (Pokémon trainer sprites)
     on the Serebii.net forums at http://www.serebiiforums.com/showthread.php?
         109428-Sprites-Sprites-Sprites!!!
     posted by user Munch!
-    
+
+Sounds were downloaded from websites with free sound effects.
+Eating sound: http://www.sounddogs.com/sound-effects/25/mp3/383627_SOUNDDOGS__vo.mp3
+Explosion sound: http://www.flashkit.com/imagesvr_ce/flashkit/soundfx/Mayhem/Explosives/Explosio-Ivan-8042/Explosio-Ivan-8042_hifi.mp3
