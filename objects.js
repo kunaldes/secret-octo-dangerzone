@@ -153,7 +153,7 @@ Barrier.createColumnObstacle = function(progress, x) {
 
 function Pellet() {
     makeIntoGameObject(this);
-    var counter_dec = 50;
+    var counter_dec = 0.37 * FPS;
     this.isPellet = true;
     
     this.width = 24;
@@ -165,13 +165,7 @@ function Pellet() {
     };
     
     this.handleCollision = function(player) {
-        var pWidth = player.width;
-        var pHeight = player.height;
-        
         player.counter -= counter_dec;
-        
-        player.x -= (player.width - pWidth) / 2;
-        player.y -= (player.height - pHeight) / 2;
     }
 }
 
@@ -197,8 +191,8 @@ function ParticleObject(x, y, angle, magnitude, opacityMult) {
     }
     
     this.update = function() {
-        this.x += this.xVel * FPS / 60;
-        this.y += this.yVel * FPS / 60;
+        this.x += this.xVel * 60 / FPS;
+        this.y += this.yVel * 60 / FPS;
         this.alpha *= this.opacityMult;
         
         if (this.alpha < 0.001) {
